@@ -268,6 +268,9 @@ $conn->close();
 
             <button type="submit" name="iniciar_sesion" class="button3">Iniciar Sesion</button>
             <p class="text-center mt-4">
+                <a href="views/registro.php" class="text-blue-500 hover:underline">¿Registrarte?</a>
+            </p>
+            <p class="text-center mt-4">
                 <a href="views/olvideContraseña.php" class="text-blue-500 hover:underline">¿Olvidaste tu contraseña?</a>
             </p>
         </form>

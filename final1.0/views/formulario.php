@@ -76,13 +76,65 @@ if ($result_dispositivos->num_rows > 0) {
                 }
             }
 
-            // Insertar dispositivo solicitado en la tabla solicitud_dispositivos
-            if (!empty($id_dispositivo) && !empty($cantidad)) {
-                $sql_dispositivo = "INSERT INTO solicitud_dispositivos (id_solicitud, id_dispositivo, cantidad) 
-                                VALUES (?, ?, ?)";
-                $stmt_dispositivo = $conn->prepare($sql_dispositivo);
-                $stmt_dispositivo->bind_param("iii", $id_solicitud, $id_dispositivo, $cantidad);
-                $stmt_dispositivo->execute();
+            // Insertar dispositivos solicitados en la tabla solicitud_dispositivos
+            if (!empty($_POST['dispositivos']['id_dispositivo']) && !empty($_POST['dispositivos']['cantidad'])) {
+                $dispositivos = $_POST['dispositivos']['id_dispositivo'];
+                $cantidades = $_POST['dispositivos']['cantidad'];
+
+                for ($i = 0; $i < count($dispositivos); $i++) {
+                    $id_dispositivo = $dispositivos[$i];
+                    $cantidad = $cantidades[$i];
+
+                    if (!empty($id_dispositivo) && !empty($cantidad)) {
+                        // Insertar cada dispositivo en la tabla solicitud_dispositivos
+                        $sql_dispositivo = "INSERT INTO solicitud_dispositivos (id_solicitud, id_dispositivo, cantidad) 
+                                            VALUES (?, ?, ?)";
+                        $stmt_dispositivo = $conn->prepare($sql_dispositivo);
+                        $stmt_dispositivo->bind_param("iii", $id_solicitud, $id_dispositivo, $cantidad);
+                        $stmt_dispositivo->execute();
+                    }
+                }
+            }
+
+            // Insertar dispositivos faltantes
+            if (!empty($_POST['dispositivos_nuevos']['nombre']) && !empty($_POST['dispositivos_nuevos']['cantidad'])) {
+                $nombres = $_POST['dispositivos_nuevos']['nombre'];
+                $cantidades = $_POST['dispositivos_nuevos']['cantidad'];
+
+                for ($i = 0; $i < count($nombres); $i++) {
+                    $nombre = $nombres[$i];
+                    $cantidad = $cantidades[$i];
+
+                    if (!empty($nombre) && !empty($cantidad)) {
+                        // Insertar en la tabla dispositivos_faltante con id_solicitud
+                        $sql_faltante = "INSERT INTO dispositivos_faltante (id_solicitud, nombre_dispositivo, cantidad_dispositivo) 
+                                        VALUES (?, ?, ?)";
+                        $stmt_faltante = $conn->prepare($sql_faltante);
+                        $stmt_faltante->bind_param("isi", $id_solicitud, $nombre, $cantidad);
+                        $stmt_faltante->execute();
+                    }
+                }
+            }
+
+            // Verificar si se enviaron datos de dispositivos faltantes
+            if (!empty($_POST['dispositivos_nuevos']['nombre']) && !empty($_POST['dispositivos_nuevos']['cantidad'])) {
+                $nombres = $_POST['dispositivos_nuevos']['nombre'];
+                $cantidades = $_POST['dispositivos_nuevos']['cantidad'];
+
+                for ($i = 0; $i < count($nombres); $i++) {
+                    $nombre = $nombres[$i];
+                    $cantidad = $cantidades[$i];
+
+                    // Validar que los campos no estén vacíos
+                    if (!empty($nombre) && !empty($cantidad)) {
+                        // Insertar en la tabla dispositivos_faltante
+                        $sql_faltante = "INSERT INTO dispositivos_faltante (id_solicitud, nombre_dispositivo, cantidad_dispositivo) 
+                                         VALUES (?, ?, ?)";
+                        $stmt_faltante = $conn->prepare($sql_faltante);
+                        $stmt_faltante->bind_param("isi", $id_solicitud, $nombre, $cantidad);
+                        $stmt_faltante->execute();
+                    }
+                }
             }
 
             echo "<p class='text-green-500'>Datos insertados correctamente</p>";
@@ -329,7 +381,7 @@ if ($result_dispositivos->num_rows > 0) {
 
                         <div class="flex flex-col">
                             <span class="text-black font-bold">Propuesta de Valor</span>
-                            <span> Describa y proporcione antecedentes que permitan conocer y comprender en qué consiste el nuevo producto o servicio innovador, y cómo este soluciona un problema o constituye una oportunidad de negocios en un determinado mercado objetivo (sus posibles clientes). Maximo 300 Palabras</span>
+                            <span> Describa y proporcione antecedentes que permitan conocer y comprender en qué consiste el nuevo producto o servicio innovador, y cómo este soluciona un problema o constituye una oportunidad de negocios en un determinado mercado objetivo (sus posibles clientes). Maximo 300 Palabras</span>
                         </div>
 
                         <input required type="text" id="propuesta_valor" name="propuesta_valor" placeholder="Propuesta de Valor">
@@ -377,109 +429,118 @@ if ($result_dispositivos->num_rows > 0) {
                         <input required type="text" id="presupuesto_preliminar" name="presupuesto_preliminar" placeholder="Presupuesto preliminar">
                     </div>
 
-                    <div class="mb-4">
-                        <label for="dispositivoSelect" class="block text-lg font-semibold">Selecciona un dispositivo</label>
+                    <div class="section">
+                        <div class="flex flex-col">
+                            <span class="text-black font-bold">Dispositivos a utilizar</span>
+                            <span>Seleccione los dispositivos a utilizar para su proyecto y especifique la cantidad de cada uno.</span>
+                        </div>
 
-                        <span>Seleccione los dispositivos a utilizar para su proyecto, recuerda seleccionar la cantidad de dispositivos a utilizar.</span>
-                        <div class="custom-select">
-                            <select id="dispositivoSelect" name="id_dispositivo" class="w-full p-2 mt-2 border border-gray-300 rounded">
-                                <option value="">Selecciona un dispositivo</option>
-                                <?php foreach ($dispositivos as $dispositivo): ?>
-                                    <option value="<?php echo htmlspecialchars($dispositivo['id_dispositivo']); ?>">
-                                        <?php echo htmlspecialchars($dispositivo['nombre_dispositivo']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
+                        <div id="dispositivos">
+                            <table class="min-w-full table-auto border-collapse" id="dispositivosTable">
+                                <thead>
+                                    <tr>
+                                        <th class="border px-4 py-2">Nombre del dispositivo</th>
+                                        <th class="border px-4 py-2">Cantidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="dispositivoRow">
+                                        <td class="border px-4 py-2">
+                                            <select name="dispositivos[id_dispositivo][]" required>
+                                                <option value="">Selecciona un dispositivo</option>
+                                                <?php foreach ($dispositivos as $dispositivo): ?>
+                                                    <option value="<?php echo htmlspecialchars($dispositivo['id_dispositivo']); ?>">
+                                                        <?php echo htmlspecialchars($dispositivo['nombre_dispositivo']); ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </td>
+                                        <td class="border px-4 py-2">
+                                            <input type="number" name="dispositivos[cantidad][]" min="1" placeholder="Cantidad" required>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="flex justify-end gap-2 m-2">
+                                <button type="button" id="addDispositivo" class="w-auto text-white p-[0.2rem] bg-black">+</button>
+                                <button type="button" id="deleteDispositivo" class="w-auto text-white p-1 bg-red-700">-</button>
+                            </div>
                         </div>
                     </div>
 
+                    <div class="section">
+                        <div class="flex flex-col">
+                            <span class="text-black font-bold">Dispositivos que no se encuentran</span>
+                            <span>Agregue nombre del dispositivo que no encuentre y la cantidad que necesita</span>
+                        </div>
 
+                        <div id="dispositivos-nuevos">
+                            <table class="min-w-full table-auto border-collapse" id="dispositivosNuevosTable">
+                                <thead>
+                                    <tr>
+                                        <th class="border px-4 py-2">Nombre del dispositivo</th>
+                                        <th class="border px-4 py-2">Cantidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="dispositivoNuevoRow">
+                                        <td class="border px-4 py-2">
+                                            <input type="text" name="dispositivos_nuevos[nombre][]" placeholder="Nombre del dispositivo">
+                                        </td>
+                                        <td class="border px-4 py-2">
+                                            <input type="number" name="dispositivos_nuevos[cantidad][]" min="1" placeholder="Cantidad">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
-                    <style>
-                        .custom-select {
-                            position: relative;
-                            display: inline-block;
-                            width: 100%;
-                        }
-
-                        .custom-select select {
-                            display: none;
-
-                        }
-
-                        .select-selected {
-                            background-color: #fff;
-                            border: 1px solid #ccc;
-                            padding: 10px;
-                            border-radius: 4px;
-                            cursor: pointer;
-                        }
-
-                        .select-items {
-                            position: absolute;
-                            background-color: #fff;
-                            border: 1px solid #ccc;
-                            border-radius: 4px;
-                            z-index: 99;
-                            max-height: 150px;
-                            overflow-y: auto;
-                            width: 100%;
-                            display: none;
-                        }
-
-                        .select-items div {
-                            padding: 10px;
-                            cursor: pointer;
-                        }
-
-                        .select-items div:hover {
-                            background-color: #f0f0f0;
-                        }
-                    </style>
-
+                            <div class="flex justify-end gap-2 m-2">
+                                <button type="button" id="addDispositivoNuevo" class="w-auto text-white p-[0.2rem] bg-black">+</button>
+                                <button type="button" id="deleteDispositivoNuevo" class="w-auto text-white p-1 bg-red-700">-</button>
+                            </div>
+                        </div>
+                    </div>
 
                     <script>
-                        document.addEventListener('DOMContentLoaded', function() {
-                            const select = document.getElementById('dispositivoSelect');
-                            const selectedDiv = document.createElement('div');
-                            selectedDiv.className = 'select-selected';
-                            selectedDiv.innerHTML = select.options[select.selectedIndex].innerHTML;
-                            select.parentNode.insertBefore(selectedDiv, select);
+                        document.addEventListener("DOMContentLoaded", function() {
+                            const addDispositivoButton = document.getElementById("addDispositivo");
+                            const deleteDispositivoButton = document.getElementById("deleteDispositivo");
+                            const dispositivosTable = document.getElementById("dispositivosTable");
 
-                            const itemsDiv = document.createElement('div');
-                            itemsDiv.className = 'select-items';
+                            const addDispositivoNuevoButton = document.getElementById("addDispositivoNuevo");
+                            const deleteDispositivoNuevoButton = document.getElementById("deleteDispositivoNuevo");
+                            const dispositivosNuevosTable = document.getElementById("dispositivosNuevosTable");
 
-                            for (let i = 0; i < select.options.length; i++) {
-                                const itemDiv = document.createElement('div');
-                                itemDiv.innerHTML = select.options[i].innerHTML;
-                                itemDiv.addEventListener('click', function() {
-                                    selectedDiv.innerHTML = this.innerHTML;
-                                    select.selectedIndex = i;
-                                    itemsDiv.style.display = 'none';
-                                });
-                                itemsDiv.appendChild(itemDiv);
-                            }
-
-                            selectedDiv.addEventListener('click', function() {
-                                itemsDiv.style.display = itemsDiv.style.display === 'block' ? 'none' : 'block';
+                            addDispositivoButton.addEventListener("click", function() {
+                                const newRow = dispositivosTable.querySelector(".dispositivoRow").cloneNode(true);
+                                const inputs = newRow.querySelectorAll("input, select");
+                                inputs.forEach(input => input.value = "");
+                                dispositivosTable.querySelector("tbody").appendChild(newRow);
                             });
 
-                            select.parentNode.appendChild(itemsDiv);
+                            deleteDispositivoButton.addEventListener("click", function() {
+                                const rows = dispositivosTable.querySelectorAll("tbody tr");
+                                if (rows.length > 1) {
+                                    rows[rows.length - 1].remove();
+                                }
+                            });
 
-                            document.addEventListener('click', function(e) {
-                                if (!selectedDiv.contains(e.target)) {
-                                    itemsDiv.style.display = 'none';
+                            addDispositivoNuevoButton.addEventListener("click", function() {
+                                const newRow = dispositivosNuevosTable.querySelector(".dispositivoNuevoRow").cloneNode(true);
+                                const inputs = newRow.querySelectorAll("input");
+                                inputs.forEach(input => input.value = "");
+                                dispositivosNuevosTable.querySelector("tbody").appendChild(newRow);
+                            });
+
+                            deleteDispositivoNuevoButton.addEventListener("click", function() {
+                                const rows = dispositivosNuevosTable.querySelectorAll("tbody tr");
+                                if (rows.length > 1) {
+                                    rows[rows.length - 1].remove();
                                 }
                             });
                         });
                     </script>
-
-
-                    <div class="mb-4">
-                        <label for="cantidad">Cantidad:</label>
-                        <input type="number" id="cantidad" name="cantidad" required min="1" class="w-full p-2 mt-2 border border-gray-300 rounded" placeholder="Ingresa la cantidad de dispositivos">
-                    </div>
-
 
                 </div>
 

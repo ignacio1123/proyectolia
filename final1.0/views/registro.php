@@ -59,7 +59,7 @@
 </head>
 <body>
     <div class="container">
-    <a href="pantallaAdmin.php" class="arrow">&larr;</a>
+    <a href="login.php" class="arrow">&larr;</a>
         <h2>Registro de Usuarios</h2>
         <form action="" method="post">
             <label for="nombre">Nombre:</label>
@@ -76,8 +76,8 @@
             
             <label for="rol">Rol:</label>
             <select name="rol" id="rol" required>
-                <option value="administrador">Administrador</option>
-                <option value="director">Director</option>
+            <!--    <option value="administrador">Administrador</option>
+                <option value="director">Director</option>!-->
                 <option value="estudiante">Estudiante</option>
             </select>
             
@@ -127,8 +127,8 @@
                         // Fecha de creación
                         $fecha_creacion = date("Y-m-d H:i:s");
 
-                        // Estado inicial del usuario (activo)
-                        $estado = 'activo';
+                        // Estado inicial del usuario (en revisión)
+                        $estado = 'en revision';
 
                         // Preparar la consulta de inserción
                         $insertQuery = "INSERT INTO usuarios (nombre, apellido, email, password, rol, rut, fecha_creacion, estado) VALUES (:nombre, :apellido, :email, :password, :rol, :rut, :fecha_creacion, :estado)";
@@ -144,7 +144,7 @@
                             ':estado' => $estado
                         ]);
 
-                        $message = "Registro exitoso. Usuario $nombre $apellido ha sido creado.";
+                        $message = "Registro exitoso. Tu cuenta está en revisión. Por favor, espera la aprobación del administrador.";
                     }
                 } else {
                     $message = "Error: Todos los campos son obligatorios.";
@@ -159,3 +159,31 @@
     </div>
 </body>
 </html>
+
+<?php
+$sql = "SELECT id_usuario, nombre, apellido, email, rol, rut, estado FROM usuarios WHERE estado = 'en revision'";
+$result = $conn->query($sql);
+
+$sql = "SELECT * FROM usuarios WHERE email = ? AND password = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("ss", $email, $password);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $user = $result->fetch_assoc();
+    if ($user['estado'] === 'en revision') {
+        echo "Tu cuenta está en revisión. Por favor, espera la aprobación del administrador.";
+        exit;
+    } elseif ($user['estado'] === 'rechazado') {
+        echo "Tu cuenta ha sido rechazada. Contacta al administrador.";
+        exit;
+    } else {
+        // Continuar con el inicio de sesión
+        $_SESSION['usuario'] = $user;
+        header("Location: dashboard.php");
+        exit;
+    }
+} else {
+    echo "Credenciales incorrectas.";
+}

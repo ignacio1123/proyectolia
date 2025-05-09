@@ -118,12 +118,11 @@ $result = $conn->query($sql);
                 </div>
 
                 <div>
-
-                    <button onclick="window.location.href='registro.php'" class="bg-gray-300 text-black px-2 py-1 rounded mr-2 hover:bg-gray-200">
-                        Registrar Usuario
-                    </button>
                     <button onclick="window.location.href='gestion_usuarios.php'" class="bg-gray-300 text-black px-2 py-1 rounded mr-2 hover:bg-gray-200">
-                        Eliminar Usuarios
+                        Usuarios
+                    </button>
+                    <button onclick="window.location.href='gestion_registroUsuarios.php'" class="bg-gray-300 text-black px-2 py-1 rounded hover:bg-gray-200">
+                        Usuarios en Revisión
                     </button>
 
                 </div>

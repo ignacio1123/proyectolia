@@ -31,6 +31,70 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo "Error en la preparación de la consulta: " . $conn->error;
         }
     }
+
+    if (isset($_POST['aprobar_usuario'])) {
+        $id_usuario = intval($_POST['id_usuario']);
+        $sql_aprobar = "UPDATE usuarios SET estado = 'aprobado' WHERE id_usuario = ?";
+        if ($stmt = $conn->prepare($sql_aprobar)) {
+            $stmt->bind_param("i", $id_usuario);
+            if ($stmt->execute()) {
+                echo "Usuario aprobado exitosamente.";
+            } else {
+                echo "Error al aprobar: " . $stmt->error;
+            }
+            $stmt->close();
+        } else {
+            echo "Error en la preparación de la consulta: " . $conn->error;
+        }
+    }
+
+    if (isset($_POST['rechazar_usuario'])) {
+        $id_usuario = intval($_POST['id_usuario']);
+        $sql_rechazar = "UPDATE usuarios SET estado = 'rechazado' WHERE id_usuario = ?";
+        if ($stmt = $conn->prepare($sql_rechazar)) {
+            $stmt->bind_param("i", $id_usuario);
+            if ($stmt->execute()) {
+                echo "Usuario rechazado exitosamente.";
+            } else {
+                echo "Error al rechazar: " . $stmt->error;
+            }
+            $stmt->close();
+        } else {
+            echo "Error en la preparación de la consulta: " . $conn->error;
+        }
+    }
+
+    if (isset($_POST['activar_usuario'])) {
+        $id_usuario = intval($_POST['id_usuario']);
+        $sql_activar = "UPDATE usuarios SET estado = 'activo' WHERE id_usuario = ?";
+        if ($stmt = $conn->prepare($sql_activar)) {
+            $stmt->bind_param("i", $id_usuario);
+            if ($stmt->execute()) {
+                echo "Usuario activado exitosamente.";
+            } else {
+                echo "Error al activar: " . $stmt->error;
+            }
+            $stmt->close();
+        } else {
+            echo "Error en la preparación de la consulta: " . $conn->error;
+        }
+    }
+
+    if (isset($_POST['desactivar_usuario'])) {
+        $id_usuario = intval($_POST['id_usuario']);
+        $sql_desactivar = "UPDATE usuarios SET estado = 'inactivo' WHERE id_usuario = ?";
+        if ($stmt = $conn->prepare($sql_desactivar)) {
+            $stmt->bind_param("i", $id_usuario);
+            if ($stmt->execute()) {
+                echo "Usuario desactivado exitosamente.";
+            } else {
+                echo "Error al desactivar: " . $stmt->error;
+            }
+            $stmt->close();
+        } else {
+            echo "Error en la preparación de la consulta: " . $conn->error;
+        }
+    }
 }
 
 
@@ -94,11 +158,18 @@ $result = $conn->query($sql);
                                     <td>{$row['rut']}</td>
                                     <td><span class='$estado_clase text-white px-2 py-1 rounded'>{$row['estado']}</span></td>
                                     <td>
+                                        
                                         <form method='POST' action='' class='inline'>
                                             <input type='hidden' name='id_usuario' value='{$row['id_usuario']}'>
-                                            <!-- Botón Eliminar Usuario -->
-                                            <button type='submit' name='eliminar_usuario' class='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600'>
-                                                Eliminar usuario
+                                            
+                                            <!-- Botón Activar -->
+                                            <button type='submit' name='activar_usuario' class='bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600'>
+                                                Activo
+                                            </button>
+                                            
+                                            <!-- Botón Desactivar -->
+                                            <button type='submit' name='desactivar_usuario' class='bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600'>
+                                                Inactivo
                                             </button>
                                         </form>
                                     </td>

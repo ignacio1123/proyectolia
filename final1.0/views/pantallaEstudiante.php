@@ -1,5 +1,6 @@
 <?php
 require_once 'db_connection.php';
+
 session_start();
 
 if (!isset($_SESSION['id_usuario'])) {
@@ -8,14 +9,17 @@ if (!isset($_SESSION['id_usuario'])) {
     exit();
 }
 
-$id_usuario = $_SESSION['id_usuario'];
+$id_usuario= $_SESSION['id_usuario'];
 
 if (!is_numeric($id_usuario)) {
     echo "Error: ID de usuario no válido.";
     exit();
 }
 
-$sql = "SELECT id_solicitud, id_usuario, nombre_proyecto, estado  FROM solicitudes WHERE id_usuario = ?";
+$sql = "SELECT s.id_solicitud, s.id_usuario, u.nombre, s.nombre_proyecto, s.estado /* trae nombre del estudiante en la tabla estado de solicitud*/ 
+        FROM solicitudes s
+        INNER JOIN usuarios u ON s.id_usuario = u.id_usuario
+        WHERE s.id_usuario = ?";
 $stmt = $conn->prepare($sql);
 
 if ($stmt) {
@@ -134,7 +138,7 @@ if ($stmt) {
 
 
 
-            <a href="./formulario.php" class=" w-[15rem] p-2  mt-4 bg-black text-white font-bold text-center rounded-md hover:bg-black/80">Postula a proyectos</a>
+            <a href="./formulario.php" class=" w-[15rem] p-2  mt-4 bg-black text-white font-bold text-center rounded-md hover:bg-black/80">Postula a Proyectos</a>
         </div>
 
         <div class="w-full flex justify-center items-center   gap-2  h-[70%] ">
@@ -153,16 +157,17 @@ if ($stmt) {
                             <thead class="bg-black text-white">
                                 <tr>
                                     <th class="py-3 px-4 text-sm font-semibold uppercase border-b border-gray-700">ID Solicitud</th>
-                                    <th class="py-3 px-4 text-sm font-semibold uppercase border-b border-gray-700">ID Usuario</th>
+                                    <th class="py-3 px-4 text-sm font-semibold uppercase border-b border-gray-700">Nombre lider de Proyecto</th>
                                     <th class="py-3 px-4 text-sm font-semibold uppercase border-b border-gray-700">Nombre Proyecto</th>
                                     <th class="py-3 px-4 text-sm font-semibold uppercase border-b border-gray-700">Estado</th>
+                                    <th class="py-3 px-4 text-sm font-semibold uppercase border-b border-gray-700">Retroalimentacion</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-gray-50 divide-y divide-gray-300">
                                 <?php while ($avance = $resultado->fetch_assoc()) { ?>
-                                    <tr class="hover:bg-gray-100 transition-colors">
+                                    <tr class="hover:bg-gray-100 transition-colors">º
                                         <td class="py-3 px-4 text-sm text-gray-700"><?php echo htmlspecialchars($avance['id_solicitud']); ?></td>
-                                        <td class="py-3 px-4 text-sm text-gray-700"><?php echo htmlspecialchars($avance['id_usuario']); ?></td>
+                                        <td class="py-3 px-4 text-sm text-gray-700"><?php echo htmlspecialchars($avance['nombre']); ?></td>
                                         <td class="py-3 px-4 text-sm text-gray-700"><?php echo htmlspecialchars($avance['nombre_proyecto']); ?></td>
                                         <td class="py-3 px-4 text-sm text-gray-700">
                                             <?php
@@ -173,10 +178,21 @@ if ($stmt) {
                                                 case 'Rechazada':
                                                     echo '<span class="px-3 py-1 bg-red-200 text-red-800 rounded-full text-xs font-medium">Rechazado</span>';
                                                     break;
+                                                    case 'Pendiente':
+                                                        echo '<span class="px-3 py-1 bg-yellow-200 text-yellow-800 rounded-full text-xs font-medium">Pendiente</span>';
+                                                        break;
                                                 default:
                                                     echo '<span class="px-3 py-1 bg-yellow-200 text-yellow-800 rounded-full text-xs font-medium">En Revisión</span>';
                                             }
                                             ?>
+                                        </td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">
+                                            <button 
+                                                type="button" 
+                                                class="bg-black text-white px-2 py-1 rounded-sm hover:bg-gray-800" 
+                                                onclick="mostrarAcotaciones('<?php echo htmlspecialchars($avance['acotaciones'] ?? 'Sin retroalimentación'); ?>')">
+                                                Ver Retroalimentación
+                                            </button>
                                         </td>
                                     </tr>
                                 <?php } ?>
@@ -267,8 +283,39 @@ if ($stmt) {
 
         </div>
 
+        <!-- Modal para mostrar las acotaciones -->
+        <div id="modalAcotaciones" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
+            <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md">
+                <h2 class="text-lg font-bold mb-4">Retroalimentación</h2>
+                <p id="contenidoAcotaciones" class="text-gray-700"></p>
+                <div class="mt-4 flex justify-end">
+                    <button 
+                        type="button" 
+                        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600" 
+                        onclick="cerrarModal()">
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
 
     </section>
+
+    <script>
+        function mostrarAcotaciones(acotaciones) {
+            // Mostrar el modal
+            const modal = document.getElementById('modalAcotaciones');
+            const contenido = document.getElementById('contenidoAcotaciones');
+            contenido.textContent = acotaciones || 'No hay retroalimentación disponible.';
+            modal.classList.remove('hidden');
+        }
+
+        function cerrarModal() {
+            // Ocultar el modal
+            const modal = document.getElementById('modalAcotaciones');
+            modal.classList.add('hidden');
+        }
+    </script>
 </body>
 
 </html>
