@@ -96,7 +96,7 @@
             $host = 'localhost';
             $dbname = 'proyectolab';
             $username = 'root';
-            $password = ''; // Por defecto, la contraseña es vacía en XAMPP
+            $password = ''; 
 
             try {
                 // Crear la conexión con la base de datos
