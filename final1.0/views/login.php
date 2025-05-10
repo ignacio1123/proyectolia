@@ -33,6 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['iniciar_sesion'])) {
 
                 switch ($user['rol']) {
                     case 'estudiante':
+                        //dd($user);
                         header("Location: views/pantallaEstudiante.php");
                         break;
                     case 'director':
@@ -62,8 +63,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['iniciar_sesion'])) {
 $conn->close();
 ?>
 
-
-
 <!DOCTYPE html>
 <html lang="es">
 
@@ -82,8 +81,6 @@ $conn->close();
             display: flex;
             justify-content: center;
             align-items: center;
-
-
             background: linear-gradient(135deg,
                     #121212 25%,
                     #1a1a1a 25%,
@@ -106,15 +103,8 @@ $conn->close();
             }
         }
 
-
-
         .form-container {
-
-            /* Fondo del formulario */
             border-radius: 0.1rem;
-            /* Bordes redondeados */
-
-            /* Sombra */
         }
 
         .form {
@@ -123,15 +113,11 @@ $conn->close();
             gap: 10px;
             padding-left: 2em;
             padding-right: 2em;
-
             padding-bottom: 0.4em;
             background-color: #171717;
             border-radius: 25px;
             transition: .4s ease-in-out;
-
         }
-
-
 
         #heading {
             text-align: center;
@@ -222,34 +208,25 @@ $conn->close();
         }
 
         .button3:hover {
-            background-color: red;
+            background-color: #4a7dff;
             color: white;
         }
     </style>
-
 </head>
 
-<body class="flex justify-center items-center" id="asd">
+<body class="flex justify-center items-center min-h-screen bg-gray-900" id="asd">
+    <div class="form-container p-8 w-96">
+        <?php if (!empty($error)): ?>
+            <div class="bg-red-500 text-white p-3 mb-4 rounded text-center">
+                <?php echo $error; ?>
+            </div>
+        <?php endif; ?>
 
-
-
-
-    <div class="form-container p-8 w-96 h-full">
-
-
-        <?php if (!empty($error)) echo "<p class='text-red-500 text-center'>$error</p>"; ?>
-
-
-
-        <form class="form" action="" method="post">
-
-
-            <div class="w-full sm:w-auto text-center sm:text-left">
-                <img src="public/img/asd.jpg" alt="Logo" class="w-[6rem]">
+        <form class="form" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+            <div class="w-full text-center">
+                <img src="public/img/asd.jpg" alt="Logo" class="w-[6rem] mx-auto">
                 <h2 class="text-center text-2xl font-semibold text-white mt-6">Inicia Sesión</h2>
             </div>
-
-
 
             <div class="field">
                 <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -258,15 +235,15 @@ $conn->close();
                 <input autocomplete="off" type="email" name="correo" id="correo" placeholder="Ingrese su correo" required class="input-field">
             </div>
 
-
             <div class="field">
                 <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"></path>
                 </svg>
-                <input placeholder="Password" class="input-field" name="password" id="contraseña" placeholder="Ingrese su contraseña" required type="password">
+                <input class="input-field" name="password" id="contraseña" placeholder="Ingrese su contraseña" required type="password">
             </div>
 
-            <button type="submit" name="iniciar_sesion" class="button3">Iniciar Sesion</button>
+            <button type="submit" name="iniciar_sesion" class="button3">Iniciar Sesión</button>
+            
             <p class="text-center mt-4">
                 <a href="views/registro.php" class="text-blue-500 hover:underline">¿Registrarte?</a>
             </p>
@@ -274,13 +251,6 @@ $conn->close();
                 <a href="views/olvideContraseña.php" class="text-blue-500 hover:underline">¿Olvidaste tu contraseña?</a>
             </p>
         </form>
-
-
-
     </div>
-
-
-
 </body>
-
 </html>

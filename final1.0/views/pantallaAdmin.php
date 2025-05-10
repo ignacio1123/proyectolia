@@ -56,13 +56,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt_update->close();
             }
         }
-    } elseif (isset($_POST['eliminar'])) {
+    } elseif (isset($_POST['cambiar_estado'])) {
         $id_dispositivo = $_POST['id_dispositivo'];
-        $sql_delete = "DELETE FROM dispositivos WHERE id_dispositivo = ?";
-        if ($stmt = $conn->prepare($sql_delete)) {
-            $stmt->bind_param("i", $id_dispositivo);
-            $stmt->execute();
-            $stmt->close();
+        $nuevo_estado = $_POST['nuevo_estado']; // Ahora este valor siempre estará definido
+        $sql_estado = "UPDATE dispositivos SET estado = ? WHERE id_dispositivo = ?";
+        if ($stmt_estado = $conn->prepare($sql_estado)) {
+            $stmt_estado->bind_param("si", $nuevo_estado, $id_dispositivo);
+            $stmt_estado->execute();
+            $stmt_estado->close();
         }
     } else {
         $nombre_dispositivo = $_POST['nombre_dispositivo'];
@@ -207,28 +208,36 @@ $result = $conn->query($sql);
                     <?php
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
+                            $estado = $row['estado'];
+                            $disabled = $estado === 'inactivo' ? 'disabled' : '';
                             echo "<tr class='hover:bg-gray-100'>
                         <td class='border border-gray-100 px-4 py-2'>{$row['id_dispositivo']}</td>
                         <td class='border border-gray-100 px-4 py-2'>{$row['nombre_dispositivo']}</td>
                         <td class='border border-gray-100 px-4 py-2'>{$row['cantidad']}</td>
-                        <td class='border border-gray-100 px-4 py-2'>{$row['estado']}</td>
+                        <td class='border border-gray-100 px-4 py-2'>{$estado}</td>
                         <td class='border border-gray-100 px-4 py-2 text-center'>
                             <!-- Botón para reducir cantidad -->
                             <form method='POST' action='' class='inline'>
                                 <input type='hidden' name='id_dispositivo' value='{$row['id_dispositivo']}'>
-                                <input type='number' name='cantidad_eliminar' min='1' max='{$row['cantidad']}' placeholder='Cantidad' class='p-1 rounded border w-16'>
-                                <button type='submit' name='reducir' class='bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600'>Reducir</button>
+                                <input type='number' name='cantidad_eliminar' min='1' max='{$row['cantidad']}' placeholder='Cantidad' class='p-1 rounded border w-16' $disabled>
+                                <button type='submit' name='reducir' class='bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600' $disabled>Reducir</button>
                             </form>
                             <!-- Botón para aumentar cantidad -->
                             <form method='POST' action='' class='inline ml-2'>
                                 <input type='hidden' name='id_dispositivo' value='{$row['id_dispositivo']}'>
-                                <input type='number' name='cantidad_agregar' min='1' placeholder='Cantidad' class='p-1 rounded border w-16'>
-                                <button type='submit' name='aumentar' class='bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600'>Aumentar</button>
+                                <input type='number' name='cantidad_agregar' min='1' placeholder='Cantidad' class='p-1 rounded border w-16' $disabled>
+                                <button type='submit' name='aumentar' class='bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600' $disabled>Aumentar</button>
                             </form>
-                            <!-- Botón para eliminar dispositivo -->
+                            <!-- Botones para cambiar estado -->
                             <form method='POST' action='' class='inline ml-2'>
                                 <input type='hidden' name='id_dispositivo' value='{$row['id_dispositivo']}'>
-                                <button type='submit' name='eliminar' class='bg-gray-700 text-white px-2 py-1 rounded hover:bg-gray-800'>Eliminar</button>
+                                <input type='hidden' name='nuevo_estado' value='activo'>
+                                <button type='submit' name='cambiar_estado' class='bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600' " . ($estado === 'activo' ? 'disabled' : '') . ">Activo</button>
+                            </form>
+                            <form method='POST' action='' class='inline ml-2'>
+                                <input type='hidden' name='id_dispositivo' value='{$row['id_dispositivo']}'>
+                                <input type='hidden' name='nuevo_estado' value='inactivo'>
+                                <button type='submit' name='cambiar_estado' class='bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600' " . ($estado === 'inactivo' ? 'disabled' : '') . ">Inactivo</button>
                             </form>
                         </td>
                     </tr>";

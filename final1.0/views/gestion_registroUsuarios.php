@@ -53,11 +53,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $mensaje = "<div class='bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4'>Error en la consulta: " . $conn->error . "</div>";
         }
     }
+
+    // Procesar activación de usuario
+    if (isset($_POST['activar_usuario'])) {
+        $id_usuario = intval($_POST['id_usuario']);
+        $sql_activar = "UPDATE usuarios SET estado = 'activo' WHERE id_usuario = ?";
+        if ($stmt = $conn->prepare($sql_activar)) {
+            $stmt->bind_param("i", $id_usuario);
+            if ($stmt->execute()) {
+                echo "Usuario activado exitosamente.";
+            } else {
+                echo "Error al activar: " . $stmt->error;
+            }
+            $stmt->close();
+        } else {
+            echo "Error en la preparación de la consulta: " . $conn->error;
+        }
+    }
+
+    // Procesar desactivación de usuario
+    if (isset($_POST['desactivar_usuario'])) {
+        $id_usuario = intval($_POST['id_usuario']);
+        $sql_desactivar = "UPDATE usuarios SET estado = 'inactivo' WHERE id_usuario = ?";
+        if ($stmt = $conn->prepare($sql_desactivar)) {
+            $stmt->bind_param("i", $id_usuario);
+            if ($stmt->execute()) {
+                echo "Usuario desactivado exitosamente.";
+            } else {
+                echo "Error al desactivar: " . $stmt->error;
+            }
+            $stmt->close();
+        } else {
+            echo "Error en la preparación de la consulta: " . $conn->error;
+        }
+    }
 }
 
-// Consultar usuarios en revisión
-$sql = "SELECT id_usuario, nombre, apellido, email, rol, rut, estado FROM usuarios WHERE estado = 'en revision' ORDER BY id_usuario DESC";
+// Consultar usuarios
+$sql = "SELECT id_usuario, nombre, apellido, email, rol, rut, estado FROM usuarios WHERE estado = 'pendiente'";
 $result = $conn->query($sql);
+
+// Verificar si hay errores en la consulta
+if (!$result) {
+    die("Error en la consulta: " . $conn->error);
+}
 ?>
 
 <!DOCTYPE html>
@@ -112,7 +151,7 @@ $result = $conn->query($sql);
                                     <td class="px-4 py-2"><?php echo htmlspecialchars($row['rol']); ?></td>
                                     <td class="px-4 py-2"><?php echo htmlspecialchars($row['rut']); ?></td>
                                     <td class="px-4 py-2">
-                                        <span class="<?php echo $row['estado'] === 'aprobado' ? 'bg-green-500' : ($row['estado'] === 'rechazado' ? 'bg-red-500' : 'bg-yellow-500'); ?> text-white px-2 py-1 rounded-full text-sm">
+                                        <span class="bg-yellow-500 text-white px-2 py-1 rounded-full text-sm">
                                             <?php echo $row['estado']; ?>
                                         </span>
                                     </td>
@@ -131,7 +170,7 @@ $result = $conn->query($sql);
                             <?php endwhile; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="8" class="text-center py-4">No hay usuarios registrados en este momento.</td>
+                                <td colspan="8" class="text-center py-4">No hay usuarios pendientes.</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>

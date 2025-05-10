@@ -33,71 +33,59 @@ if (!$result) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            margin: 20px auto;
-            max-width: 80%;
-            text-align: center;
-        }
-        table {
-            margin: 20px auto;
-            border-collapse: collapse;
-            width: 100%;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #FFD700; /* Changed to darker gold color */
-            color: black;
-        }
-        .btn {
-            background-color: #FFD700; /* Changed to match header */
-            color: black;
-            padding: 10px 20px;
-            text-decoration: none;
-            display: inline-block;
-            margin: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div class="container">
-        <div style="text-align: left; margin-left: 20px;">
-            <a href="pantallaDirector.php" class="btn">Volver al Panel</a>
-            <button id="downloadPDF" class="btn">Descargar PDF</button>
-            <button id="downloadXLSX" class="btn">Descargar XLSX</button>
+<body class="bg-gray-100">
+    <!-- Barra de navegación superior -->
+    <div class="bg-black text-white p-4 shadow-md flex justify-between items-center">
+        <h1 class="text-2xl font-semibold">Dispositivos Faltantes</h1>
+        <div>
+            <a href="/proyectolia/final1.0/views/pantallaDirector.php" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
+                Volver al Panel
+            </a>
         </div>
-        <h1>Dispositivos Faltantes</h1>
-        <table id="tablaDispositivosFaltantes">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Nombre del Dispositivo</th>
-                    <th>Cantidad Faltante</th>
-                    <th>Numero de Solicitud</th>
-                    <th>Nombre de Proyecto</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while ($row = $result->fetch_assoc()): ?>
+    </div>
+
+    <!-- Contenedor principal -->
+    <div class="p-8">
+        <!-- Botones de acción -->
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-gray-800">Listado de Dispositivos Faltantes</h2>
+            <div class="flex space-x-4">
+                <button id="downloadPDF" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
+                    Descargar PDF
+                </button>
+                <button id="downloadXLSX" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
+                    Descargar XLSX
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabla de dispositivos faltantes -->
+        <div class="bg-white rounded-lg shadow overflow-x-auto">
+            <table id="tablaDispositivosFaltantes" class="min-w-full divide-y divide-gray-200">
+                <thead>
                     <tr>
-                        <td><?php echo htmlspecialchars($row['id_dispositivo']); ?></td>
-                        <td><?php echo htmlspecialchars($row['nombre_dispositivo']); ?></td>
-                        <td><?php echo htmlspecialchars($row['cantidad_dispositivo']); ?></td>
-                        <td><?php echo htmlspecialchars($row['id_solicitud']); ?></td>
-                        <td><?php echo htmlspecialchars($row['nombre_proyecto']); ?></td>
+                        <th>#</th>
+                        <th>Nombre del Dispositivo</th>
+                        <th>Cantidad Faltante</th>
+                        <th>Numero de Solicitud</th>
+                        <th>Nombre de Proyecto</th>
                     </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php while ($row = $result->fetch_assoc()): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($row['id_dispositivo']); ?></td>
+                            <td><?php echo htmlspecialchars($row['nombre_dispositivo']); ?></td>
+                            <td><?php echo htmlspecialchars($row['cantidad_dispositivo']); ?></td>
+                            <td><?php echo htmlspecialchars($row['id_solicitud']); ?></td>
+                            <td><?php echo htmlspecialchars($row['nombre_proyecto']); ?></td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script>

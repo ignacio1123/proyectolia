@@ -3,147 +3,153 @@ session_start();
 require_once 'db_connection.php';
 
 // Obtener dispositivos disponibles de la base de datos
-$sql_dispositivos = "SELECT id_dispositivo, nombre_dispositivo FROM dispositivos";
+$sql_dispositivos = "SELECT id_dispositivo, nombre_dispositivo, estado, cantidad FROM dispositivos";
 $result_dispositivos = $conn->query($sql_dispositivos);
 $dispositivos = [];
 if ($result_dispositivos->num_rows > 0) {
     while ($row = $result_dispositivos->fetch_assoc()) {
         $dispositivos[] = $row;
     }
+}
 
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $id_usuario = $_SESSION['id_usuario'];
-        $nombre_proyecto = $_POST['nombre_proyecto'];
-        $descripcion = $_POST['descripcion'];
-        $propuesta_valor = $_POST['propuesta_valor'];
-        $merito_innovativo = $_POST['merito_innovativo'];
-        $redes_apoyo = $_POST['redes_apoyo'];
-        $factores_criticos = $_POST['factores_criticos'];
-        $oportunidad_mercado = $_POST['oportunidad_mercado'];
-        $potencial_mercado = $_POST['potencial_mercado'];
-        $aspectos_validar = $_POST['aspectos_validar'];
-        $presupuesto_preliminar = $_POST['presupuesto_preliminar'];
-        $id_dispositivo = $_POST['id_dispositivo']; // Dispositivo seleccionado
-        $cantidad = $_POST['cantidad']; // Cantidad del dispositivo
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $id_usuario = $_SESSION['id_usuario'];
+    $nombre_proyecto = $_POST['nombre_proyecto'];
+    $descripcion = $_POST['descripcion'];
+    $propuesta_valor = $_POST['propuesta_valor'];
+    $merito_innovativo = $_POST['merito_innovativo'];
+    $redes_apoyo = $_POST['redes_apoyo'];
+    $factores_criticos = $_POST['factores_criticos'];
+    $oportunidad_mercado = $_POST['oportunidad_mercado'];
+    $potencial_mercado = $_POST['potencial_mercado'];
+    $aspectos_validar = $_POST['aspectos_validar'];
+    $presupuesto_preliminar = $_POST['presupuesto_preliminar'];
 
-        // Insertar datos en la tabla de solicitudes
-        $sql = "INSERT INTO solicitudes(id_usuario, nombre_proyecto, descripcion, propuesta_valor, merito_innovativo, redes_apoyo, factores_criticos, oportunidad_mercado, potencial_mercado, aspectos_validar, presupuesto_preliminar) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param(
-            "sssssssssss",
-            $id_usuario,
-            $nombre_proyecto,
-            $descripcion,
-            $propuesta_valor,
-            $merito_innovativo,
-            $redes_apoyo,
-            $factores_criticos,
-            $oportunidad_mercado,
-            $potencial_mercado,
-            $aspectos_validar,
-            $presupuesto_preliminar
-        );
+    // Insertar datos en la tabla de solicitudes
+    $sql = "INSERT INTO solicitudes(id_usuario, nombre_proyecto, descripcion, propuesta_valor, merito_innovativo, redes_apoyo, factores_criticos, oportunidad_mercado, potencial_mercado, aspectos_validar, presupuesto_preliminar) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param(
+        "sssssssssss",
+        $id_usuario,
+        $nombre_proyecto,
+        $descripcion,
+        $propuesta_valor,
+        $merito_innovativo,
+        $redes_apoyo,
+        $factores_criticos,
+        $oportunidad_mercado,
+        $potencial_mercado,
+        $aspectos_validar,
+        $presupuesto_preliminar
+    );
 
-        if ($stmt->execute()) {
-            $id_solicitud = $conn->insert_id; // Obtener el ID de la solicitud recién insertada
+    if ($stmt->execute()) {
+        $id_solicitud = $conn->insert_id; // Obtener el ID de la solicitud recién insertada
 
-            // Verificar si se enviaron datos de participantes
-            if (!empty($_POST['participante']['nombre'])) {
-                // Recorremos todos los participantes
-                $participantes = count($_POST['participante']['nombre']);
-                for ($i = 0; $i < $participantes; $i++) {
-                    $nombre = $_POST['participante']['nombre'][$i];
-                    $rut = $_POST['participante']['rut'][$i];
-                    $carrera = $_POST['participante']['carrera'][$i];
-                    $rol = $_POST['participante']['rol'][$i];
-                    $tipo = $_POST['participante']['tipo'][$i];
+        // Verificar si se enviaron datos de participantes
+        if (!empty($_POST['participante']['nombre'])) {
+            // Recorremos todos los participantes
+            $participantes = count($_POST['participante']['nombre']);
+            for ($i = 0; $i < $participantes; $i++) {
+                $nombre = $_POST['participante']['nombre'][$i];
+                $rut = $_POST['participante']['rut'][$i];
+                $carrera = $_POST['participante']['carrera'][$i];
+                $rol = $_POST['participante']['rol'][$i];
+                $tipo = $_POST['participante']['tipo'][$i];
 
-                    // Insertar datos del participante en la tabla de participantes
-                    $sql_participante = "INSERT INTO participantes (id_solicitud, nombre, rut, carrera, rol, tipo) 
-                                     VALUES (?, ?, ?, ?, ?, ?)";
-                    $stmt_participante = $conn->prepare($sql_participante);
-                    $stmt_participante->bind_param(
-                        "isssss",
-                        $id_solicitud,
-                        $nombre,
-                        $rut,
-                        $carrera,
-                        $rol,
-                        $tipo
-                    );
-                    $stmt_participante->execute();
-                }
+                // Insertar datos del participante en la tabla de participantes
+                $sql_participante = "INSERT INTO participantes (id_solicitud, nombre, rut, carrera, rol, tipo) 
+                                 VALUES (?, ?, ?, ?, ?, ?)";
+                $stmt_participante = $conn->prepare($sql_participante);
+                $stmt_participante->bind_param(
+                    "isssss",
+                    $id_solicitud,
+                    $nombre,
+                    $rut,
+                    $carrera,
+                    $rol,
+                    $tipo
+                );
+                $stmt_participante->execute();
             }
-
-            // Insertar dispositivos solicitados en la tabla solicitud_dispositivos
-            if (!empty($_POST['dispositivos']['id_dispositivo']) && !empty($_POST['dispositivos']['cantidad'])) {
-                $dispositivos = $_POST['dispositivos']['id_dispositivo'];
-                $cantidades = $_POST['dispositivos']['cantidad'];
-
-                for ($i = 0; $i < count($dispositivos); $i++) {
-                    $id_dispositivo = $dispositivos[$i];
-                    $cantidad = $cantidades[$i];
-
-                    if (!empty($id_dispositivo) && !empty($cantidad)) {
-                        // Insertar cada dispositivo en la tabla solicitud_dispositivos
-                        $sql_dispositivo = "INSERT INTO solicitud_dispositivos (id_solicitud, id_dispositivo, cantidad) 
-                                            VALUES (?, ?, ?)";
-                        $stmt_dispositivo = $conn->prepare($sql_dispositivo);
-                        $stmt_dispositivo->bind_param("iii", $id_solicitud, $id_dispositivo, $cantidad);
-                        $stmt_dispositivo->execute();
-                    }
-                }
-            }
-
-            // Insertar dispositivos faltantes
-            if (!empty($_POST['dispositivos_nuevos']['nombre']) && !empty($_POST['dispositivos_nuevos']['cantidad'])) {
-                $nombres = $_POST['dispositivos_nuevos']['nombre'];
-                $cantidades = $_POST['dispositivos_nuevos']['cantidad'];
-
-                for ($i = 0; $i < count($nombres); $i++) {
-                    $nombre = $nombres[$i];
-                    $cantidad = $cantidades[$i];
-
-                    if (!empty($nombre) && !empty($cantidad)) {
-                        // Insertar en la tabla dispositivos_faltante con id_solicitud
-                        $sql_faltante = "INSERT INTO dispositivos_faltante (id_solicitud, nombre_dispositivo, cantidad_dispositivo) 
-                                        VALUES (?, ?, ?)";
-                        $stmt_faltante = $conn->prepare($sql_faltante);
-                        $stmt_faltante->bind_param("isi", $id_solicitud, $nombre, $cantidad);
-                        $stmt_faltante->execute();
-                    }
-                }
-            }
-
-            // Verificar si se enviaron datos de dispositivos faltantes
-            if (!empty($_POST['dispositivos_nuevos']['nombre']) && !empty($_POST['dispositivos_nuevos']['cantidad'])) {
-                $nombres = $_POST['dispositivos_nuevos']['nombre'];
-                $cantidades = $_POST['dispositivos_nuevos']['cantidad'];
-
-                for ($i = 0; $i < count($nombres); $i++) {
-                    $nombre = $nombres[$i];
-                    $cantidad = $cantidades[$i];
-
-                    // Validar que los campos no estén vacíos
-                    if (!empty($nombre) && !empty($cantidad)) {
-                        // Insertar en la tabla dispositivos_faltante
-                        $sql_faltante = "INSERT INTO dispositivos_faltante (id_solicitud, nombre_dispositivo, cantidad_dispositivo) 
-                                         VALUES (?, ?, ?)";
-                        $stmt_faltante = $conn->prepare($sql_faltante);
-                        $stmt_faltante->bind_param("isi", $id_solicitud, $nombre, $cantidad);
-                        $stmt_faltante->execute();
-                    }
-                }
-            }
-
-            echo "<p class='text-green-500'>Datos insertados correctamente</p>";
-        } else {
-            echo "<p class='text-red-500'>Error al insertar datos: " . $conn->error . "</p>";
         }
 
-        $stmt->close();
+        // Insertar dispositivos solicitados en la tabla solicitud_dispositivos y actualizar la cantidad en la tabla dispositivos
+        if (!empty($_POST['dispositivos']['id_dispositivo']) && !empty($_POST['dispositivos']['cantidad'])) {
+            $dispositivos = $_POST['dispositivos']['id_dispositivo'];
+            $cantidades = $_POST['dispositivos']['cantidad'];
+
+            for ($i = 0; $i < count($dispositivos); $i++) {
+                $id_dispositivo = $dispositivos[$i];
+                $cantidad = $cantidades[$i];
+
+                if (!empty($id_dispositivo) && !empty($cantidad)) {
+                    // Insertar cada dispositivo en la tabla solicitud_dispositivos
+                    $sql_dispositivo = "INSERT INTO solicitud_dispositivos (id_solicitud, id_dispositivo, cantidad) 
+                                        VALUES (?, ?, ?)";
+                    $stmt_dispositivo = $conn->prepare($sql_dispositivo);
+                    $stmt_dispositivo->bind_param("iii", $id_solicitud, $id_dispositivo, $cantidad);
+                    $stmt_dispositivo->execute();
+
+                    // Actualizar la cantidad en la tabla dispositivos
+                    $sql_update_dispositivo = "UPDATE dispositivos SET cantidad = cantidad - ? WHERE id_dispositivo = ?";
+                    $stmt_update_dispositivo = $conn->prepare($sql_update_dispositivo);
+                    $stmt_update_dispositivo->bind_param("ii", $cantidad, $id_dispositivo);
+                    $stmt_update_dispositivo->execute();
+                }
+            }
+        }
+
+        // Insertar dispositivos faltantes
+        if (!empty($_POST['dispositivos_nuevos']['nombre']) && !empty($_POST['dispositivos_nuevos']['cantidad'])) {
+            $nombres = $_POST['dispositivos_nuevos']['nombre'];
+            $cantidades = $_POST['dispositivos_nuevos']['cantidad'];
+
+            for ($i = 0; $i < count($nombres); $i++) {
+                $nombre = $nombres[$i];
+                $cantidad = $cantidades[$i];
+
+                if (!empty($nombre) && !empty($cantidad)) {
+                    // Insertar en la tabla dispositivos_faltante con id_solicitud
+                    $sql_faltante = "INSERT INTO dispositivos_faltante (id_solicitud, nombre_dispositivo, cantidad_dispositivo) 
+                                    VALUES (?, ?, ?)";
+                    $stmt_faltante = $conn->prepare($sql_faltante);
+                    $stmt_faltante->bind_param("isi", $id_solicitud, $nombre, $cantidad);
+                    $stmt_faltante->execute();
+                }
+            }
+        }
+
+        // Verificar si se enviaron datos de dispositivos faltantes
+        if (!empty($_POST['dispositivos_nuevos']['nombre']) && !empty($_POST['dispositivos_nuevos']['cantidad'])) {
+            $nombres = $_POST['dispositivos_nuevos']['nombre'];
+            $cantidades = $_POST['dispositivos_nuevos']['cantidad'];
+
+            for ($i = 0; $i < count($nombres); $i++) {
+                $nombre = $nombres[$i];
+                $cantidad = $cantidades[$i];
+
+                // Validar que los campos no estén vacíos
+                if (!empty($nombre) && !empty($cantidad)) {
+                    // Insertar en la tabla dispositivos_faltante
+                    $sql_faltante = "INSERT INTO dispositivos_faltante (id_solicitud, nombre_dispositivo, cantidad_dispositivo) 
+                                     VALUES (?, ?, ?)";
+                    $stmt_faltante = $conn->prepare($sql_faltante);
+                    $stmt_faltante->bind_param("isi", $id_solicitud, $nombre, $cantidad);
+                    $stmt_faltante->execute();
+                }
+            }
+        }
+
+        // Redirigir a pantallaEstudiante.php
+        header("Location: pantallaEstudiante.php");
+        exit();
+    } else {
+        echo "<p class='text-red-500'>Error al insertar datos: " . $conn->error . "</p>";
     }
+
+    $stmt->close();
 }
 ?>
 
@@ -449,8 +455,13 @@ if ($result_dispositivos->num_rows > 0) {
                                             <select name="dispositivos[id_dispositivo][]" required>
                                                 <option value="">Selecciona un dispositivo</option>
                                                 <?php foreach ($dispositivos as $dispositivo): ?>
-                                                    <option value="<?php echo htmlspecialchars($dispositivo['id_dispositivo']); ?>">
-                                                        <?php echo htmlspecialchars($dispositivo['nombre_dispositivo']); ?>
+                                                    <?php
+                                                    $estado = $dispositivo['estado'];
+                                                    $disabled = $estado === 'inactivo' ? 'disabled' : '';
+                                                    $style = $estado === 'inactivo' ? 'style="color: gray;"' : '';
+                                                    ?>
+                                                    <option value="<?php echo htmlspecialchars($dispositivo['id_dispositivo']); ?>" <?php echo $disabled; ?> <?php echo $style; ?>>
+                                                        <?php echo htmlspecialchars($dispositivo['nombre_dispositivo']); ?> (<?php echo $estado; ?>)
                                                     </option>
                                                 <?php endforeach; ?>
                                             </select>
