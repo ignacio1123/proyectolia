@@ -22,18 +22,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['iniciar_sesion'])) {
             $user = $result->fetch_assoc();
 
             // Verificar el estado del usuario
-            if (is_null($user['estado']) || $user['estado'] === 'Pendiente') {
+            if ($user['estado'] === 'Pendiente' || $user['estado'] === 'Inactivo') {
                 echo "<script>
                         document.addEventListener('DOMContentLoaded', function() {
                             Swal.fire({
                                 icon: 'warning',
-                                title: 'Estado pendiente',
-                                text: 'Tu cuenta aún no está activada. Por favor, contacta al administrador.',
+                                title: 'Acceso denegado',
+                                text: 'Tu cuenta está en un estado no válido (Pendiente o Inactivo). Por favor, contacta al administrador.',
                                 confirmButtonText: 'Aceptar'
                             });
                         });
                       </script>";
-            } else if (password_verify($contraseña, $user['password'])) {
+            } else if (($user['estado'] === 'Aprobado' || $user['estado'] === 'Activo') && password_verify($contraseña, $user['password'])) {
 
                 $_SESSION['correo'] = $correo;
                 $_SESSION['role'] = $user['rol'];
