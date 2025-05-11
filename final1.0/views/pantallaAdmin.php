@@ -120,7 +120,7 @@ $result = $conn->query($sql);
 
                 <div>
                     <button onclick="window.location.href='gestion_usuarios.php'" class="bg-gray-300 text-black px-2 py-1 rounded mr-2 hover:bg-gray-200">
-                        Usuarios
+                        Usuarios Registrados
                     </button>
                     <button onclick="window.location.href='gestion_registroUsuarios.php'" class="bg-gray-300 text-black px-2 py-1 rounded hover:bg-gray-200">
                         Usuarios en Revisión

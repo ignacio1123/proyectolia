@@ -263,24 +263,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <span class="text-black font-medium">Bienvenido, <?php echo htmlspecialchars($nombre); ?></span>
     </header>
 
-    <nav class="absolute left-0 flex flex-col justify-between items-center bg-black text-white w-[12rem] h-[145rem] py-8 z-10 shadow-lg">
+    <!-- Menú lateral adaptado -->
+    <nav class="fixed left-0 top-0 flex flex-col justify-between items-center bg-black text-white w-[12rem] min-h-screen py-8 z-10 shadow-lg">
         <!-- Logo -->
         <div>
             <a href="/" class="text-[1.2rem] font-bold">
                 Laboratorio<span class="text-yellow-400 text-[1.5rem] font-bold">LIA</span>
             </a>
         </div>
-
-        <!-- Enlace Cerrar Sesión -->
-        <div>
-            <a href="../logout.php" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
-                Cerrar Sesión
-            </a>
-        </div>
     </nav>
 
-    <div class="w-full h-auto flex justify-center items-center pl-40  pt-20 pb-24 flex-col">
-
+    <!-- Ajusta el padding-left para que el contenido no se solape con el menú -->
+    <div class="w-full h-auto flex justify-center items-center pt-20 pb-24 flex-col" style="padding-left: 12rem;">
         <form class="w-[80%] flex justify-center items-center" action="" method="POST">
             <div class="w-full">
 
@@ -296,7 +290,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
 
                     <div class="w-full sm:w-auto text-center sm:text-right mt-4 sm:mt-0">
-                        <a href="../views/pantallaEstudiante.php" class="text-blue-500 hover:underline">Volver atrás</a>
+                        <a href="../views/pantallaEstudiante.php" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
+                            Volver atrás
+                        </a>
                     </div>
                 </div>
 

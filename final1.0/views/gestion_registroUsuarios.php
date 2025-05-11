@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Procesar aprobación de usuario
     if (isset($_POST['aprobar_usuario'])) {
         $id_usuario = intval($_POST['id_usuario']);
-        $sql_aprobar = "UPDATE usuarios SET estado = 'aprobado' WHERE id_usuario = ?";
+        $sql_aprobar = "UPDATE usuarios SET estado = 'Activo' WHERE id_usuario = ?"; // Cambiado a 'Activo'
         
         if ($stmt = $conn->prepare($sql_aprobar)) {
             $stmt->bind_param("i", $id_usuario);
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Procesar rechazo de usuario
     if (isset($_POST['rechazar_usuario'])) {
         $id_usuario = intval($_POST['id_usuario']);
-        $sql_rechazar = "UPDATE usuarios SET estado = 'rechazado' WHERE id_usuario = ?";
+        $sql_rechazar = "UPDATE usuarios SET estado = 'Inactivo' WHERE id_usuario = ?"; // Cambiado a 'Inactivo'
         
         if ($stmt = $conn->prepare($sql_rechazar)) {
             $stmt->bind_param("i", $id_usuario);
@@ -57,13 +57,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Procesar activación de usuario
     if (isset($_POST['activar_usuario'])) {
         $id_usuario = intval($_POST['id_usuario']);
-        $sql_activar = "UPDATE usuarios SET estado = 'activo' WHERE id_usuario = ?";
+        $sql_activar = "UPDATE usuarios SET estado = 'Activo' WHERE id_usuario = ?";
         if ($stmt = $conn->prepare($sql_activar)) {
             $stmt->bind_param("i", $id_usuario);
             if ($stmt->execute()) {
                 echo "Usuario activado exitosamente.";
             } else {
-                echo "Error al activar: " . $stmt->error;
+                echo "Error al Activar: " . $stmt->error;
             }
             $stmt->close();
         } else {
@@ -111,9 +111,9 @@ if (!$result) {
 <body class="bg-gray-100">
     <!-- Barra de navegación superior -->
     <div class="bg-black text-white p-4 shadow-md flex justify-between items-center">
-        <h1 class="text-2xl font-semibold">Usuarios Pendientes de Aprobación</h1>
+        <h1 class="text-2xl font-semibold">Registro de Usuarios Pendientes</h1>
         <div>
-            <button onclick="window.location.href='pantallaAdmin.php'" class="bg-white text-black px-3 py-1 rounded hover:bg-gray-200 transition">
+            <button onclick="window.location.href='pantallaAdmin.php'" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300 mr-2">
                 Volver al Panel
             </button>
         </div>
@@ -183,6 +183,19 @@ if (!$result) {
         </div>
     </div>
 
+    <!-- Modal de confirmación -->
+    <div id="modalConfirmacion" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 hidden">
+        <div class="bg-gray-900 rounded-lg shadow-lg p-8 w-full max-w-xl border-2 border-white-400">
+            <h3 class="text-2xl font-bold mb-2 text-white" id="modalTitulo">¿Está seguro?</h3>
+            <p class="mb-6 text-gray-300" id="modalDescripcion">Confirme la acción a realizar sobre el usuario:</p>
+            <div class="mb-6" id="modalMensaje"></div>
+            <div class="flex justify-end gap-2">
+                <button id="btnCancelar" class="px-6 py-2 bg-black text-white font-semibold rounded hover:bg-gray-800 transition duration-300">Cancelar</button>
+                <button id="btnConfirmar" class="px-6 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded transition duration-300">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
@@ -196,6 +209,61 @@ if (!$result) {
                 "order": [[0, "desc"]]
             });
         });
+    </script>
+    <script>
+        let formPendiente = null;
+        let btnPendiente = null;
+
+        document.querySelectorAll('form.inline-flex button').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                formPendiente = btn.closest('form');
+                btnPendiente = btn;
+                // Obtén los datos del usuario de la fila
+                let fila = btn.closest('tr');
+                let nombre = fila.children[1].innerText;
+                let apellido = fila.children[2].innerText;
+                let email = fila.children[3].innerText;
+                let rol = fila.children[4].innerText;
+                let rut = fila.children[5].innerText;
+                let accion = btn.name === 'aprobar_usuario' ? 'Aprobar' : 'Rechazar';
+
+                // Cambia el título y descripción según la acción
+                document.getElementById('modalTitulo').innerText = `¿Está seguro que desea ${accion.toLowerCase()} este usuario?`;
+                document.getElementById('modalDescripcion').innerText = `Por favor, confirme que desea realizar esta acción. Revise los datos del usuario:`;
+
+                // Mensaje con los datos del usuario
+                var mensaje = `
+                    <table class="min-w-full text-xl text-left mb-4">
+                        <tr class="h-14"><td class="font-semibold pr-6 text-white">Nombre:</td><td class="font-bold text-white">${nombre}</td></tr>
+                        <tr class="h-14"><td class="font-semibold pr-6 text-white">Apellido:</td><td class="font-bold text-white">${apellido}</td></tr>
+                        <tr class="h-14"><td class="font-semibold pr-6 text-white">Email:</td><td class="font-bold text-white">${email}</td></tr>
+                        <tr class="h-14"><td class="font-semibold pr-6 text-white">RUT:</td><td class="font-bold text-white">${rut}</td></tr>
+                        <tr class="h-14"><td class="font-semibold pr-6 text-white">Rol:</td><td class="font-bold text-white">${rol}</td></tr>
+                        <tr class="h-14"><td class="font-semibold pr-6 text-white">Acción:</td><td class="font-bold ${accion === 'Aprobar' ? 'text-green-500' : 'text-red-500'}">${accion}</td></tr>
+                    </table>
+                `;
+                document.getElementById('modalMensaje').innerHTML = mensaje;
+                document.getElementById('modalConfirmacion').classList.remove('hidden');
+            });
+        });
+
+        document.getElementById('btnCancelar').onclick = function() {
+            document.getElementById('modalConfirmacion').classList.add('hidden');
+            formPendiente = null;
+            btnPendiente = null;
+        };
+
+        document.getElementById('btnConfirmar').onclick = function() {
+            if (formPendiente && btnPendiente) {
+                let input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = btnPendiente.name;
+                formPendiente.appendChild(input);
+                formPendiente.submit();
+            }
+            document.getElementById('modalConfirmacion').classList.add('hidden');
+        };
     </script>
 </body>
 </html>

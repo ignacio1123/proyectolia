@@ -55,11 +55,15 @@
         }
 
     </style>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="container">
-    <a href="login.php" class="arrow">&larr;</a>
+    <div class="w-full sm:w-auto text-center sm:text-right mt-4 sm:mt-0">
+        <a href="/proyectolia/final1.0/index.php" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
+            Volver atrás
+        </a>
+    </div>
         <h2>Registro de Usuarios</h2>
         <form action="" method="post">
             <label for="nombre">Nombre:</label>
@@ -84,7 +88,9 @@
             <label for="rut">RUT:</label>
             <input type="text" name="rut" id="rut" required>
             
-            <button type="submit">Registrar</button>
+            <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
+                Registrar
+            </button>
         </form>
 
         <?php
@@ -157,5 +163,17 @@
 
         <div class="message"><?php echo htmlspecialchars($message); ?></div>
     </div>
+    <?php if (!empty($message)): ?>
+    <script>
+        window.onload = function() {
+            Swal.fire({
+                icon: "<?php echo (strpos($message, 'exitoso') !== false) ? 'success' : 'error'; ?>",
+                title: "<?php echo (strpos($message, 'exitoso') !== false) ? '¡Registro exitoso!' : '¡Atención!'; ?>",
+                text: "<?php echo str_replace(array("\r", "\n"), '', htmlspecialchars($message)); ?>",
+                confirmButtonColor: '#facc15'
+            });
+        }
+    </script>
+    <?php endif; ?>
 </body>
 </html>

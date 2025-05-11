@@ -48,17 +48,16 @@ if (!$result) {
 
     <!-- Contenedor principal -->
     <div class="p-8">
-        <!-- Botones de acción -->
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-semibold text-gray-800">Listado de Dispositivos Faltantes</h2>
-            <div class="flex space-x-4">
-                <button id="downloadPDF" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
-                    Descargar PDF
-                </button>
-                <button id="downloadXLSX" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
-                    Descargar XLSX
-                </button>
-            </div>
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Listado de Dispositivos Faltantes</h2>
+        
+        <!-- Botones de acción alineados a la izquierda -->
+        <div class="mb-4 flex gap-2">
+            <button id="downloadXLSX" class="bg-white border border-gray-400 text-black font-semibold py-2 px-4 rounded transition duration-300 hover:bg-gray-100">
+                Descargar XLSX
+            </button>
+            <button id="downloadPDF" class="bg-white border border-gray-400 text-black font-semibold py-2 px-4 rounded transition duration-300 hover:bg-gray-100">
+                Descargar PDF
+            </button>
         </div>
 
         <!-- Tabla de dispositivos faltantes -->
@@ -66,21 +65,21 @@ if (!$result) {
             <table id="tablaDispositivosFaltantes" class="min-w-full divide-y divide-gray-200">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Nombre del Dispositivo</th>
-                        <th>Cantidad Faltante</th>
                         <th>Numero de Solicitud</th>
                         <th>Nombre de Proyecto</th>
+                        <th>#</th>
+                        <th>Nombre del Dispositivo</th>
+                        <th>Cantidad Solicitada</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php while ($row = $result->fetch_assoc()): ?>
                         <tr>
+                            <td><?php echo htmlspecialchars($row['id_solicitud']); ?></td>
+                            <td><?php echo htmlspecialchars($row['nombre_proyecto']); ?></td>
                             <td><?php echo htmlspecialchars($row['id_dispositivo']); ?></td>
                             <td><?php echo htmlspecialchars($row['nombre_dispositivo']); ?></td>
                             <td><?php echo htmlspecialchars($row['cantidad_dispositivo']); ?></td>
-                            <td><?php echo htmlspecialchars($row['id_solicitud']); ?></td>
-                            <td><?php echo htmlspecialchars($row['nombre_proyecto']); ?></td>
                         </tr>
                     <?php endwhile; ?>
                 </tbody>
@@ -117,12 +116,24 @@ if (!$result) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            doc.text("Dispositivos Faltantes", 14, 10);
+            // Mensaje personalizado centrado
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const title = "Dispositivos Faltantes";
+            const subtitle = "Dispositivos Faltantes para los estudiantes de Santo Tomas Cede Concepción, Laboratorio de innovación Aplicada.";
+
+            doc.setFontSize(16);
+            const titleWidth = doc.getTextWidth(title);
+            doc.text(title, (pageWidth - titleWidth) / 2, 15);
+
+            doc.setFontSize(11);
+            const subtitleWidth = doc.getTextWidth(subtitle);
+            doc.text(subtitle, (pageWidth - subtitleWidth) / 2, 23);
+
             doc.autoTable({
                 html: '#tablaDispositivosFaltantes',
-                startY: 20,
+                startY: 30,
                 styles: { fontSize: 10 },
-                headStyles: { fillColor: [255, 255, 0], textColor: [0, 0, 0] } // Fondo amarillo, texto negro
+                headStyles: { fillColor: [255, 255, 0], textColor: [0, 0, 0] }
             });
 
             doc.save('Dispositivos_Faltantes.pdf');
@@ -131,8 +142,34 @@ if (!$result) {
         // Descargar como XLSX
         document.getElementById('downloadXLSX').addEventListener('click', function() {
             const table = document.getElementById('tablaDispositivosFaltantes');
-            const workbook = XLSX.utils.table_to_book(table, { sheet: "Dispositivos Faltantes" });
-            XLSX.writeFile(workbook, 'Dispositivos_Faltantes.xlsx');
+            const wb = XLSX.utils.book_new();
+
+            // Mensaje personalizado como filas arriba de la tabla
+            const mensaje = [
+                ["Dispositivos Faltantes"],
+                ["Dispositivos Faltantes para los estudiantes de Santo Tomas Cede Concepción, Laboratorio de innovación Aplicada."],
+                []
+            ];
+
+            // Obtener los datos de la tabla manualmente (incluyendo encabezados)
+            const ws_data = [];
+            // Agregar mensaje
+            mensaje.forEach(row => ws_data.push(row));
+            // Agregar encabezados
+            const headers = [];
+            table.querySelectorAll('thead tr th').forEach(th => headers.push(th.innerText));
+            ws_data.push(headers);
+            // Agregar filas
+            table.querySelectorAll('tbody tr').forEach(tr => {
+                const row = [];
+                tr.querySelectorAll('td').forEach(td => row.push(td.innerText));
+                ws_data.push(row);
+            });
+
+            // Crear hoja y archivo
+            const ws = XLSX.utils.aoa_to_sheet(ws_data);
+            XLSX.utils.book_append_sheet(wb, ws, "Dispositivos Faltantes");
+            XLSX.writeFile(wb, 'Dispositivos_Faltantes.xlsx');
         });
     </script>
 </body>

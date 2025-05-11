@@ -70,13 +70,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($stmt = $conn->prepare($sql_activar)) {
             $stmt->bind_param("i", $id_usuario);
             if ($stmt->execute()) {
-                echo "Usuario activado exitosamente.";
-            } else {
-                echo "Error al activar: " . $stmt->error;
+                header("Location: gestion_usuarios.php");
+                exit;
             }
             $stmt->close();
-        } else {
-            echo "Error en la preparación de la consulta: " . $conn->error;
         }
     }
 
@@ -86,19 +83,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($stmt = $conn->prepare($sql_desactivar)) {
             $stmt->bind_param("i", $id_usuario);
             if ($stmt->execute()) {
-                echo "Usuario desactivado exitosamente.";
-            } else {
-                echo "Error al desactivar: " . $stmt->error;
+                header("Location: gestion_usuarios.php");
+                exit;
             }
             $stmt->close();
-        } else {
-            echo "Error en la preparación de la consulta: " . $conn->error;
         }
     }
 }
 
 
-$sql = "SELECT id_usuario, nombre, apellido, email, rol, rut, estado FROM usuarios";
+$sql = "SELECT id_usuario, nombre, apellido, email, rol, rut, estado FROM usuarios WHERE estado IN ('activo', 'inactivo')";
 $result = $conn->query($sql);
 ?>
 
@@ -117,12 +111,10 @@ $result = $conn->query($sql);
     <div class="bg-black text-white p-4 shadow-md flex justify-between items-center">
         <h1 class="text-2xl font-semibold">Administrador</h1>
         <div>
-            <button onclick="window.location.href='pantallaAdmin.php'" class="bg-white text-black px-2 py-1 rounded mr-2 hover:bg-gray-200">
-                Volver a dispositivos
-            </button>
-            <button onclick="window.location.href='login.php'" class="bg-white text-black px-2 py-1 rounded hover:bg-gray-200">
-                Cerrar Sesión
-            </button>
+            <button onclick="window.location.href='pantallaAdmin.php'"
+            class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300 mr-2">
+            Volver a dispositivos
+        </button>
         </div>
     </div>
 
@@ -158,17 +150,28 @@ $result = $conn->query($sql);
                                     <td>{$row['rut']}</td>
                                     <td><span class='$estado_clase text-white px-2 py-1 rounded'>{$row['estado']}</span></td>
                                     <td>
-                                        
-                                        <form method='POST' action='' class='inline'>
+                                        <form method='POST' action='' class='inline cambiar-estado-form'>
                                             <input type='hidden' name='id_usuario' value='{$row['id_usuario']}'>
-                                            
-                                            <!-- Botón Activar -->
-                                            <button type='submit' name='activar_usuario' class='bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600'>
+                                            <button 
+                                                type='submit' 
+                                                name='activar_usuario' 
+                                                class='bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600'
+                                                data-nombre='{$row['nombre']}'
+                                                data-apellido='{$row['apellido']}'
+                                                data-rut='{$row['rut']}'
+                                                data-rol='{$row['rol']}'
+                                            >
                                                 Activo
                                             </button>
-                                            
-                                            <!-- Botón Desactivar -->
-                                            <button type='submit' name='desactivar_usuario' class='bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600'>
+                                            <button 
+                                                type='submit' 
+                                                name='desactivar_usuario' 
+                                                class='bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600'
+                                                data-nombre='{$row['nombre']}'
+                                                data-apellido='{$row['apellido']}'
+                                                data-rut='{$row['rut']}'
+                                                data-rol='{$row['rol']}'
+                                            >
                                                 Inactivo
                                             </button>
                                         </form>
@@ -182,6 +185,19 @@ $result = $conn->query($sql);
                     ?>
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación -->
+    <div id="modalConfirmacion" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 hidden">
+        <div class="bg-black rounded-lg shadow-lg p-8 w-full max-w-xl border-2 border-white-700">
+            <h3 class="text-2xl font-bold mb-2 text-white">¿Está seguro que desea cambiar el estado del usuario?</h3>
+            <p class="mb-6 text-white">Por favor, confirme que desea realizar esta acción. Revise los datos del usuario:</p>
+            <div class="mb-6" id="modalMensaje"></div>
+            <div class="flex justify-end gap-2">
+                <button id="btnCancelar" class="px-6 py-2 bg-gray-800 text-white font-semibold rounded hover:bg-gray-700 transition duration-300">Cancelar</button>
+                <button id="btnConfirmar" class="px-6 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded transition duration-300">Confirmar</button>
+            </div>
         </div>
     </div>
 
@@ -226,6 +242,55 @@ $result = $conn->query($sql);
         });
 
     </script>
+
+    <script>
+let formPendiente = null;
+let btnPendiente = null;
+
+document.querySelectorAll('.cambiar-estado-form button').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        formPendiente = btn.closest('form');
+        btnPendiente = btn;
+        var nombre = btn.getAttribute('data-nombre');
+        var apellido = btn.getAttribute('data-apellido');
+        var rut = btn.getAttribute('data-rut');
+        var rol = btn.getAttribute('data-rol');
+        var accion = btn.name === 'activar_usuario' ? 'Activar' : 'Desactivar';
+        var mensaje = `
+            <table class="min-w-full text-xl text-left text-gray-200 mb-4">
+                <tr class="h-14"><td class="font-semibold pr-6 text-white-400">Nombre:</td><td class="font-bold">${nombre}</td></tr>
+                <tr class="h-14"><td class="font-semibold pr-6 text-white-400">Apellido:</td><td class="font-bold">${apellido}</td></tr>
+                <tr class="h-14"><td class="font-semibold pr-6 text-white-400">RUT:</td><td class="font-bold">${rut}</td></tr>
+                <tr class="h-14"><td class="font-semibold pr-6 text-white-400">Rol:</td><td class="font-bold">${rol}</td></tr>
+                <tr class="h-14">
+                    <td class="font-semibold pr-6 text-white-400">Acción:</td>
+                    <td class="font-bold ${accion === 'Activar' ? 'text-green-500' : 'text-red-500'}">${accion}</td>
+                </tr>
+            </table>
+        `;
+        document.getElementById('modalMensaje').innerHTML = mensaje;
+        document.getElementById('modalConfirmacion').classList.remove('hidden');
+    });
+});
+
+document.getElementById('btnCancelar').onclick = function() {
+    document.getElementById('modalConfirmacion').classList.add('hidden');
+    formPendiente = null;
+    btnPendiente = null;
+};
+
+document.getElementById('btnConfirmar').onclick = function() {
+    if (formPendiente && btnPendiente) {
+        let input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = btnPendiente.name;
+        formPendiente.appendChild(input);
+        formPendiente.submit();
+    }
+    document.getElementById('modalConfirmacion').classList.add('hidden');
+};
+</script>
 
 </body>
 </html>

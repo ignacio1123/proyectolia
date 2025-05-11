@@ -50,6 +50,10 @@ if (!$result) {
             </a>
         </div>
     </div>
+     <!-- Contenedor principal -->
+    <div class="p-8">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Listado de Dispositivos Utilizados en Proyectos</h2>
+        
     <!-- Tabla de dispositivos solicitados -->
     <div class="bg-white rounded-lg shadow overflow-x-auto mt-12 p-4">
         <table id="tablaDispositivosSolicitados" class="min-w-full divide-y divide-gray-200">
