@@ -9,7 +9,7 @@
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
     <div class="bg-white shadow-lg rounded-lg p-6 max-w-md w-full">
         <!-- Enlace para volver -->
-        <a href="../index.php" class="text-blue-500 hover:text-blue-700 text-lg mb-4 block">&larr; Volver</a>
+        <a href="../views/pantallaPrincipal.php" class="text-green-500 hover:text-green-700 text-lg mb-4 block">&larr; Volver</a>
         <!-- Título -->
         <h2 class="text-2xl font-bold text-gray-800 text-center mb-4">Restablecer Contraseña</h2>
         <form action="reset_request.php" method="post" class="space-y-4">
@@ -21,7 +21,7 @@
             </div>
             <div class="text-center">
                 <button type="submit" 
-                        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">
+                        class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">
                     Enviar enlace de restablecimiento
                 </button>
             </div>

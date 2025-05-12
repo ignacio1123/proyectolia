@@ -60,7 +60,7 @@
 <body>
     <div class="container">
     <div class="w-full sm:w-auto text-center sm:text-right mt-4 sm:mt-0">
-        <a href="/proyectolia/final1.0/index.php" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
+        <a href="../views/pantallaPrincipal.php" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
             Volver atrás
         </a>
     </div>
@@ -80,8 +80,8 @@
             
             <label for="rol">Rol:</label>
             <select name="rol" id="rol" required>
-            <!--    <option value="administrador">Administrador</option>
-                <option value="director">Director</option>!-->
+                <!--<option value="administrador">Administrador</option>!-->
+                <option value="director">Director</option>
                 <option value="estudiante">Estudiante</option>
             </select>
             
