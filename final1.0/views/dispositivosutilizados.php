@@ -195,26 +195,52 @@ if (!$result) {
                         className: 'bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded mr-2',
                         title: 'Listado de Dispositivos Utilizados en Proyectos',
                         messageTop: 'Dispositivos utilizados por los estudiantes de Santo Tomas Cede Concepción, Laboratorio de innovación Aplicada.',
-                        orientation: 'landscape',
+                        orientation: 'portrait', // Cambia a vertical para hacerlo más angosto
                         pageSize: 'A4',
                         customize: function (doc) {
-                            doc.styles.tableHeader = {
-                                bold: true,
-                                fontSize: 12,
-                                color: 'black',
-                                fillColor: '#f5f5f5',
-                                alignment: 'center'
-                            };
+                            // Título principal
                             doc.styles.title = {
-                                fontSize: 18,
+                                fontSize: 16, // Igual que jsPDF
                                 bold: true,
                                 alignment: 'center',
                                 color: '#1e293b',
                                 margin: [0, 0, 0, 10]
                             };
-                            doc.content[1].margin = [0, 0, 0, 10];
-                            doc.content[1].alignment = 'center';
-                            doc.content[2].table.widths = ['15%', '35%', '10%', '25%', '15%'];
+                            // Subtítulo (ajustar si lo tienes como content[1])
+                            if (doc.content[1] && doc.content[1].text) {
+                                doc.content[1].fontSize = 11; // Igual que jsPDF
+                                doc.content[1].margin = [0, 0, 0, 10];
+                                doc.content[1].alignment = 'center';
+                            }
+                            // Encabezados de tabla
+                            doc.styles.tableHeader = {
+                                bold: true,
+                                fontSize: 10, // Igual que jsPDF
+                                color: 'black',
+                                fillColor: '#f5f5f5',
+                                alignment: 'center'
+                            };
+                            // Ajusta los anchos de las columnas para que el PDF sea más compacto
+                            doc.content[2].table.widths = ['12%', '22%', '8%', '32%', '10%'];
+                            // Reduce el tamaño de fuente general de la tabla
+                            doc.styles.tableBodyEven = { fontSize: 10 };
+                            doc.styles.tableBodyOdd = { fontSize: 10 };
+
+                            // Alternar color de filas (franjas)
+                            var body = doc.content[2].table.body;
+                            for (var i = 1; i < body.length; i++) { // Empieza en 1 para saltar encabezado
+                                if (i % 2 === 0) {
+                                    // Gris claro
+                                    for (var j = 0; j < body[i].length; j++) {
+                                        body[i][j].fillColor = '#f5f5f5';
+                                    }
+                                } else {
+                                    // Blanco
+                                    for (var j = 0; j < body[i].length; j++) {
+                                        body[i][j].fillColor = '#ffffff';
+                                    }
+                                }
+                            }
                         }
                     }
                 ],
@@ -237,7 +263,6 @@ if (!$result) {
                     }
                 }
             });
-
             // Botón personalizado para imprimir PDF (exportar PDF)
             $('#btnImprimirPDF').on('click', function() {
                 tabla.button('.buttons-pdf').trigger();

@@ -105,6 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!empty($_POST['dispositivos_nuevos']['nombre']) && !empty($_POST['dispositivos_nuevos']['cantidad'])) {
             $nombres = $_POST['dispositivos_nuevos']['nombre'];
             $cantidades = $_POST['dispositivos_nuevos']['cantidad'];
+            $links = isset($_POST['dispositivos_nuevos']['link']) ? $_POST['dispositivos_nuevos']['link'] : [];
 
             // Filtrar duplicados por nombre (ignorando mayúsculas/minúsculas y espacios)
             $nombresUnicos = [];
@@ -120,13 +121,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             foreach ($indicesUnicos as $i) {
                 $nombre = $nombres[$i];
                 $cantidad = $cantidades[$i];
+                $link = isset($links[$i]) ? $links[$i] : null;
 
                 if (!empty($nombre) && !empty($cantidad)) {
-                    // Insertar en la tabla dispositivos_faltante con id_solicitud
-                    $sql_faltante = "INSERT INTO dispositivos_faltante (id_solicitud, nombre_dispositivo, cantidad_dispositivo) 
-                                    VALUES (?, ?, ?)";
+                    // Insertar en la tabla dispositivos_faltante con id_solicitud y link
+                    $sql_faltante = "INSERT INTO dispositivos_faltante (id_solicitud, nombre_dispositivo, cantidad_dispositivo, LinkDispositivoFaltante) 
+                                    VALUES (?, ?, ?, ?)";
                     $stmt_faltante = $conn->prepare($sql_faltante);
-                    $stmt_faltante->bind_param("isi", $id_solicitud, $nombre, $cantidad);
+                    $stmt_faltante->bind_param("isis", $id_solicitud, $nombre, $cantidad, $link);
                     $stmt_faltante->execute();
                 }
             }
@@ -469,7 +471,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="section" id="dispositivos-nuevos-section" style="display:none;">
                         <div class="flex flex-col">
                             <span class="text-black font-bold">Dispositivos que no se encuentran</span>
-                            <span>Agregue nombre del dispositivo que no encuentre y la cantidad que necesita</span>
+                            <span>
+                                Agregue nombre del dispositivo que no encuentre, la cantidad que necesita
+                                <b>e incorpore el link donde encuentre más barato para su compra</b>
+                            </span>
                         </div>
                         <div id="dispositivos-nuevos">
                             <table class="min-w-full table-auto border-collapse" id="dispositivosNuevosTable">
@@ -477,6 +482,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <tr>
                                         <th class="border px-4 py-2">Nombre del dispositivo</th>
                                         <th class="border px-4 py-2">Cantidad</th>
+                                        <th class="border px-4 py-2">Link</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -487,10 +493,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <td class="border px-4 py-2">
                                             <input type="number" name="dispositivos_nuevos[cantidad][]" min="1" placeholder="Cantidad">
                                         </td>
+                                        <td class="border px-4 py-2">
+                                            <input type="url" name="dispositivos_nuevos[link][]" placeholder="Link de compra" class="w-96" />
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
-
                             <div class="flex justify-end gap-2 m-2">
                                 <button type="button" id="addDispositivoNuevo" class="w-auto text-white p-[0.2rem] bg-black">+</button>
                                 <button type="button" id="deleteDispositivoNuevo" class="w-auto text-white p-1 bg-red-700">-</button>
