@@ -10,7 +10,8 @@ $query = "
         df.nombre_dispositivo, 
         df.cantidad_dispositivo, 
         s.id_solicitud, 
-        s.nombre_proyecto 
+        s.nombre_proyecto,
+        df.Ubicacion
     FROM dispositivos_faltante df
     LEFT JOIN solicitudes s ON df.id_solicitud = s.id_solicitud
     ORDER BY s.id_solicitud, df.id_dispositivo
@@ -148,21 +149,32 @@ if (!$result) {
             <table id="tablaDispositivosFaltantes" class="min-w-full divide-y divide-gray-200">
                 <thead>
                     <tr>
-                        <th>Numero de Solicitud</th>
-                        <th>Nombre de Proyecto</th>
+                        <th style="width: 80px; min-width: 60px; max-width: 100px; font-size: 0.95em;">Numero de Solicitud</th>
+                        <th style="width: 600px; max-width: 900px;">Nombre de Proyecto</th>
                         <th>#</th>
                         <th>Nombre del Dispositivo</th>
                         <th>Cantidad Solicitada</th>
+                        <th>Tipo de Estado</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php while ($row = $result->fetch_assoc()): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($row['id_solicitud']); ?></td>
-                            <td><?php echo htmlspecialchars($row['nombre_proyecto']); ?></td>
+                            <td style="width: 80px; font-size: 0.95em;"><?php echo htmlspecialchars($row['id_solicitud']); ?></td>
+                            <td style="max-width: 900px; white-space: normal; word-break: break-word;">
+                                <?php echo htmlspecialchars($row['nombre_proyecto']); ?>
+                            </td>
                             <td><?php echo htmlspecialchars($row['id_dispositivo']); ?></td>
                             <td><?php echo htmlspecialchars($row['nombre_dispositivo']); ?></td>
                             <td><?php echo htmlspecialchars($row['cantidad_dispositivo']); ?></td>
+                            <td>
+                                <select class="estado-dispositivo" data-id="<?php echo $row['id_dispositivo']; ?>">
+                                    <option value="Básica" <?php if($row['Ubicacion']=='Básica') echo 'selected'; ?>>Por Comprar</option>
+                                    <option value="Comprado" <?php if($row['Ubicacion']=='Comprado') echo 'selected'; ?>>Comprado</option>
+                                    <option value="En LIA Entregado" <?php if($row['Ubicacion']=='En LIA Entregado') echo 'selected'; ?>>En LIA Entregado</option>
+                                    <option value="Rechazado" <?php if($row['Ubicacion']=='Rechazado') echo 'selected'; ?>>Rechazado</option>
+                                </select>
+                            </td>
                         </tr>
                     <?php endwhile; ?>
                 </tbody>
@@ -248,6 +260,11 @@ if (!$result) {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
         }
+
+        #printArea table td, #printArea table th {
+            white-space: normal !important;
+            word-break: break-word !important;
+        }
     </style>
     
     <!-- Div oculto que se usará para imprimir -->
@@ -259,11 +276,12 @@ if (!$result) {
         <table>
             <thead>
                 <tr>
-                    <th style="background-color: #ffff00; color: #000;">Numero de Solicitud</th>
-                    <th style="background-color: #ffff00; color: #000;">Nombre de Proyecto</th>
+                    <th style="width: 80px; font-size: 0.95em; background-color: #ffff00; color: #000;">Numero de Solicitud</th>
+                    <th style="max-width: 500px; font-size: 1em; background-color: #ffff00; color: #000;">Nombre de Proyecto</th>
                     <th style="background-color: #ffff00; color: #000;">#</th>
                     <th style="background-color: #ffff00; color: #000;">Nombre del Dispositivo</th>
                     <th style="background-color: #ffff00; color: #000;">Cantidad Solicitada</th>
+                    <th style="background-color: #ffff00; color: #000;">Tipo de Estado</th>
                 </tr>
             </thead>
             <tbody id="printTableBody">
@@ -315,37 +333,43 @@ if (!$result) {
             });
         });
 
+        // Guardar el estado al cambiar el select
+        $(document).on('change', '.estado-dispositivo', function() {
+            var id = $(this).data('id');
+            var estado = $(this).val();
+            $.post('actualizar_estado.php', {id: id, estado: estado});
+        });
+
         // Función para imprimir la tabla
         document.getElementById('printTable').addEventListener('click', function() {
-            // Obtener todos los datos de la tabla
             const table = $('#tablaDispositivosFaltantes').DataTable();
             const printTableBody = document.getElementById('printTableBody');
-            
-            // Limpiar contenido anterior
             printTableBody.innerHTML = '';
-            
+
             // Llenar la tabla de impresión con los datos actuales (incluyendo filtrados)
             table.rows({ search: 'applied' }).every(function(rowIdx) {
-                const data = this.data();
+                const data = this.node().children;
                 const row = document.createElement('tr');
-                
-                // Crear celda para cada columna
                 for (let i = 0; i < data.length; i++) {
                     const cell = document.createElement('td');
-                    cell.textContent = data[i];
+                    if (i === 5) { // Columna Tipo de Estado
+                        const select = data[i].querySelector('select');
+                        cell.textContent = select ? select.options[select.selectedIndex].text : data[i].textContent;
+                    } else {
+                        cell.textContent = data[i].textContent;
+                    }
                     row.appendChild(cell);
                 }
-                
                 printTableBody.appendChild(row);
             });
-            
+
             // Mostrar el área de impresión
             const printArea = document.getElementById('printArea');
             printArea.style.display = 'block';
-            
+
             // Imprimir
             window.print();
-            
+
             // Ocultar el área de impresión después de imprimir
             printArea.style.display = 'none';
         });
@@ -368,11 +392,40 @@ if (!$result) {
             const subtitleWidth = doc.getTextWidth(subtitle);
             doc.text(subtitle, (pageWidth - subtitleWidth) / 2, 23);
 
+            // Construir los datos manualmente para mostrar solo el estado seleccionado
+            const table = $('#tablaDispositivosFaltantes').DataTable();
+            const headers = [];
+            $('#tablaDispositivosFaltantes thead th').each(function() {
+                headers.push($(this).text());
+            });
+            const body = [];
+            table.rows({ search: 'applied' }).every(function(rowIdx) {
+                const cells = this.node().children;
+                const row = [];
+                for (let i = 0; i < cells.length; i++) {
+                    if (i === 5) {
+                        const select = cells[i].querySelector('select');
+                        row.push(select ? select.options[select.selectedIndex].text : cells[i].textContent);
+                    } else {
+                        row.push(cells[i].textContent);
+                    }
+                }
+                body.push(row);
+            });
+
             doc.autoTable({
-                html: '#tablaDispositivosFaltantes',
+                head: [headers],
+                body: body,
                 startY: 30,
                 styles: { fontSize: 10 },
-                headStyles: { fillColor: [255, 255, 0], textColor: [0, 0, 0] }
+                headStyles: { fillColor: [255, 255, 0], textColor: [0, 0, 0] },
+                columnStyles: {
+                    1: { cellWidth: 80, minCellWidth: 80, maxCellWidth: 120, halign: 'left' } // 1 es la columna "Nombre de Proyecto"
+                },
+                // Permitir que el texto haga salto de línea
+                didParseCell: function (data) {
+                    data.cell.styles.cellPadding = 3;
+                }
             });
 
             doc.save('Dispositivos_Faltantes.pdf');
@@ -380,7 +433,7 @@ if (!$result) {
 
         // Descargar como XLSX
         document.getElementById('downloadXLSX').addEventListener('click', function() {
-            const table = document.getElementById('tablaDispositivosFaltantes');
+            const table = $('#tablaDispositivosFaltantes').DataTable();
             const wb = XLSX.utils.book_new();
 
             // Mensaje personalizado como filas arriba de la tabla
@@ -392,16 +445,25 @@ if (!$result) {
 
             // Obtener los datos de la tabla manualmente (incluyendo encabezados)
             const ws_data = [];
-            // Agregar mensaje
             mensaje.forEach(row => ws_data.push(row));
-            // Agregar encabezados
+            // Encabezados
             const headers = [];
-            table.querySelectorAll('thead tr th').forEach(th => headers.push(th.innerText));
+            $('#tablaDispositivosFaltantes thead th').each(function() {
+                headers.push($(this).text());
+            });
             ws_data.push(headers);
-            // Agregar filas
-            table.querySelectorAll('tbody tr').forEach(tr => {
+            // Filas
+            table.rows({ search: 'applied' }).every(function(rowIdx) {
+                const cells = this.node().children;
                 const row = [];
-                tr.querySelectorAll('td').forEach(td => row.push(td.innerText));
+                for (let i = 0; i < cells.length; i++) {
+                    if (i === 5) {
+                        const select = cells[i].querySelector('select');
+                        row.push(select ? select.options[select.selectedIndex].text : cells[i].textContent);
+                    } else {
+                        row.push(cells[i].textContent);
+                    }
+                }
                 ws_data.push(row);
             });
 

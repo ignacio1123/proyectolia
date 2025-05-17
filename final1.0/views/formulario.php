@@ -12,6 +12,13 @@ if ($result_dispositivos->num_rows > 0) {
     }
 }
 
+// Obtener proveedores únicos para el formulario
+$proveedores = [];
+$proveedorQuery = $conn->query("SELECT DISTINCT Proveedor FROM dispositivos_faltante WHERE Proveedor IS NOT NULL AND Proveedor != ''");
+while ($rowProv = $proveedorQuery->fetch_assoc()) {
+    $proveedores[] = $rowProv['Proveedor'];
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_usuario = $_SESSION['id_usuario'];
     $nombre_proyecto = $_POST['nombre_proyecto'];
@@ -105,6 +112,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!empty($_POST['dispositivos_nuevos']['nombre']) && !empty($_POST['dispositivos_nuevos']['cantidad'])) {
             $nombres = $_POST['dispositivos_nuevos']['nombre'];
             $cantidades = $_POST['dispositivos_nuevos']['cantidad'];
+            $proveedores = isset($_POST['dispositivos_nuevos']['proveedor']) ? $_POST['dispositivos_nuevos']['proveedor'] : [];
+            $proveedores_otro = isset($_POST['dispositivos_nuevos']['proveedor_otro']) ? $_POST['dispositivos_nuevos']['proveedor_otro'] : [];
             $links = isset($_POST['dispositivos_nuevos']['link']) ? $_POST['dispositivos_nuevos']['link'] : [];
 
             // Filtrar duplicados por nombre (ignorando mayúsculas/minúsculas y espacios)
@@ -121,14 +130,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             foreach ($indicesUnicos as $i) {
                 $nombre = $nombres[$i];
                 $cantidad = $cantidades[$i];
+                // Si el proveedor es "otro", usar el valor del input proveedor_otro
+                $proveedor = (isset($proveedores[$i]) && $proveedores[$i] === 'otro' && !empty($proveedores_otro[$i]))
+                    ? $proveedores_otro[$i]
+                    : (isset($proveedores[$i]) ? $proveedores[$i] : null);
                 $link = isset($links[$i]) ? $links[$i] : null;
 
                 if (!empty($nombre) && !empty($cantidad)) {
-                    // Insertar en la tabla dispositivos_faltante con id_solicitud y link
-                    $sql_faltante = "INSERT INTO dispositivos_faltante (id_solicitud, nombre_dispositivo, cantidad_dispositivo, LinkDispositivoFaltante) 
-                                    VALUES (?, ?, ?, ?)";
+                    // Insertar en la tabla dispositivos_faltante con id_solicitud, proveedor, link y Ubicacion = 'Por Comprar'
+                    $sql_faltante = "INSERT INTO dispositivos_faltante (id_solicitud, nombre_dispositivo, cantidad_dispositivo, Proveedor, LinkDispositivoFaltante, Ubicacion) 
+                                    VALUES (?, ?, ?, ?, ?, 'Por Comprar')";
                     $stmt_faltante = $conn->prepare($sql_faltante);
-                    $stmt_faltante->bind_param("isis", $id_solicitud, $nombre, $cantidad, $link);
+                    $stmt_faltante->bind_param("isiss", $id_solicitud, $nombre, $cantidad, $proveedor, $link);
                     $stmt_faltante->execute();
                 }
             }
@@ -288,7 +301,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="section">
                         <label for="nombre_proyecto">Nombre del proyecto</label>
-                        <input required type="text" id="nombre_proyecto" name="nombre_proyecto" placeholder="Nombre del proyecto">
+                        <input required type="text" id="nombre_proyecto" name="nombre_proyecto" placeholder="Nombre del proyecto" maxlength="60">
                     </div>
 
                     <div class="section">
@@ -472,8 +485,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div class="flex flex-col">
                             <span class="text-black font-bold">Dispositivos que no se encuentran</span>
                             <span>
-                                Agregue nombre del dispositivo que no encuentre, la cantidad que necesita
-                                <b>e incorpore el link donde encuentre más barato para su compra</b>
+                                Agregue nombre del dispositivo que no encuentre, la cantidad que necesita,
+                                <b>asigne el nombre del proveedor</b>
+                                e incorpore el link donde encuentre más barato para su compra
                             </span>
                         </div>
                         <div id="dispositivos-nuevos">
@@ -482,6 +496,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <tr>
                                         <th class="border px-4 py-2">Nombre del dispositivo</th>
                                         <th class="border px-4 py-2">Cantidad</th>
+                                        <th class="border px-4 py-2">Proveedor</th>
                                         <th class="border px-4 py-2">Link</th>
                                     </tr>
                                 </thead>
@@ -492,6 +507,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         </td>
                                         <td class="border px-4 py-2">
                                             <input type="number" name="dispositivos_nuevos[cantidad][]" min="1" placeholder="Cantidad">
+                                        </td>
+                                        <td class="border px-4 py-2">
+                                            <?php if (count($proveedores) > 0): ?>
+                                                <select name="dispositivos_nuevos[proveedor][]" class="px-3 py-2 border rounded" onchange="mostrarInputProveedor(this)">
+                                                    <option value="">Seleccione proveedor</option>
+                                                    <?php foreach ($proveedores as $prov): ?>
+                                                        <option value="<?php echo htmlspecialchars($prov); ?>"><?php echo htmlspecialchars($prov); ?></option>
+                                                    <?php endforeach; ?>
+                                                    <option value="otro">Otro...</option>
+                                                </select>
+                                                <input type="text" name="dispositivos_nuevos[proveedor_otro][]" placeholder="Nuevo proveedor" style="display:none;" class="px-3 py-2 border rounded" onblur="validarProveedorUnico(this)" />
+                                                <script>
+                                                function mostrarInputProveedor(select) {
+                                                    var input = select.parentNode.querySelector('input[name="dispositivos_nuevos[proveedor_otro][]"]');
+                                                    if (select.value === 'otro') {
+                                                        input.style.display = 'inline-block';
+                                                    } else {
+                                                        input.style.display = 'none';
+                                                        input.value = '';
+                                                    }
+                                                }
+                                                function validarProveedorUnico(input) {
+                                                    var nuevo = input.value.trim().toLowerCase();
+                                                    if (!nuevo) return;
+                                                    var select = input.parentNode.querySelector('select[name="dispositivos_nuevos[proveedor][]"]');
+                                                    var opciones = Array.from(select.options).map(opt => opt.value.trim().toLowerCase());
+                                                    if (opciones.includes(nuevo)) {
+                                                        alert("El proveedor ya existe. Por favor, selecciónalo de la lista.");
+                                                        input.value = '';
+                                                        input.focus();
+                                                    }
+                                                }
+                                                </script>
+                                            <?php else: ?>
+                                                <button type="button" onclick="mostrarInputProveedorManual(this)" class="bg-blue-600 text-white px-2 py-1 rounded">Agregar nuevo proveedor</button>
+                                                <span class="text-sm text-gray-600 block mt-1">No hay proveedores guardados. Haz clic en el botón para ingresar uno nuevo.</span>
+                                                <input type="text" name="dispositivos_nuevos[proveedor_otro][]" placeholder="Nuevo proveedor" style="display:none;" class="px-3 py-2 border rounded mt-2" onblur="validarProveedorUnico(this)" />
+                                                <script>
+                                                function mostrarInputProveedorManual(btn) {
+                                                    var input = btn.parentNode.querySelector('input[name="dispositivos_nuevos[proveedor_otro][]"]');
+                                                    input.style.display = 'inline-block';
+                                                    btn.style.display = 'none';
+                                                }
+                                                function validarProveedorUnico(input) {
+                                                    // No hay select, así que no hay nada que validar aquí
+                                                }
+                                                </script>
+                                            <?php endif; ?>
                                         </td>
                                         <td class="border px-4 py-2">
                                             <input type="url" name="dispositivos_nuevos[link][]" placeholder="Link de compra" class="w-96" />

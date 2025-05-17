@@ -201,6 +201,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id_solicitud']) && iss
                         <a href="vistaDispositivosFaltantes.php" class="bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded-lg px-5 py-2.5 transition duration-300">
                             Ver Dispositivos Faltantes
                         </a>
+                        <!-- Botón Cotización dispositivos Faltantes -->
+                        <a href="CotizacionesDIpositivos.php" class="bg-yellow-500 hover:bg-yellow-600 text-black font-medium rounded-lg px-5 py-2.5 transition duration-300">
+                            Cotización dispositivos Faltantes
+                        </a>
                         <!-- Botón Dispositivos Utilizados en Proyectos -->
                         <a href="dispositivosutilizados.php" class="bg-black hover:bg-gray-800 text-white font-medium rounded-lg px-5 py-2.5 transition duration-300">
                             Dispositivos Utilizados en Proyectos
