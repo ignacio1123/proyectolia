@@ -187,10 +187,10 @@ if ($stmt) {
                     data.forEach(avance => {
                         let estadoHtml = '';
                         switch (avance.estado) {
-                            case 'Aprobada':
+                            case 'Aprobado':
                                 estadoHtml = '<span class="px-3 py-1 bg-green-200 text-green-800 rounded-full text-xs font-medium">Aprobado</span>';
                                 break;
-                            case 'Rechazada':
+                            case 'Rechazado':
                                 estadoHtml = '<span class="px-3 py-1 bg-red-200 text-red-800 rounded-full text-xs font-medium">Rechazado</span>';
                                 break;
                             case 'Pendiente':
@@ -210,7 +210,7 @@ if ($stmt) {
                                         type="button"
                                         class="bg-black text-white px-2 py-0.5 rounded-sm hover:bg-gray-800 text-xs font-medium"
                                         style="min-width: 0; height: 1.5rem; line-height: 1rem;"
-                                        onclick="mostrarAcotaciones('${avance.acotaciones ? avance.acotaciones.replace(/'/g, "\\'") : 'Sin retroalimentación'}')">
+                                        onclick="mostrarAcotaciones('${avance.acotaciones ? avance.acotaciones.replace(/'/g, "\\'") : 'Espere su retroalimentación...'}')">
                                         Ver Retroalimentación
                                     </button>
                                 </td>

@@ -106,7 +106,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $nombres = $_POST['dispositivos_nuevos']['nombre'];
             $cantidades = $_POST['dispositivos_nuevos']['cantidad'];
 
-            for ($i = 0; $i < count($nombres); $i++) {
+            // Filtrar duplicados por nombre (ignorando mayúsculas/minúsculas y espacios)
+            $nombresUnicos = [];
+            $indicesUnicos = [];
+            foreach ($nombres as $i => $nombre) {
+                $nombreKey = strtolower(trim($nombre));
+                if ($nombreKey !== '' && !in_array($nombreKey, $nombresUnicos)) {
+                    $nombresUnicos[] = $nombreKey;
+                    $indicesUnicos[] = $i;
+                }
+            }
+
+            foreach ($indicesUnicos as $i) {
                 $nombre = $nombres[$i];
                 $cantidad = $cantidades[$i];
 
@@ -114,27 +125,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     // Insertar en la tabla dispositivos_faltante con id_solicitud
                     $sql_faltante = "INSERT INTO dispositivos_faltante (id_solicitud, nombre_dispositivo, cantidad_dispositivo) 
                                     VALUES (?, ?, ?)";
-                    $stmt_faltante = $conn->prepare($sql_faltante);
-                    $stmt_faltante->bind_param("isi", $id_solicitud, $nombre, $cantidad);
-                    $stmt_faltante->execute();
-                }
-            }
-        }
-
-        // Verificar si se enviaron datos de dispositivos faltantes
-        if (!empty($_POST['dispositivos_nuevos']['nombre']) && !empty($_POST['dispositivos_nuevos']['cantidad'])) {
-            $nombres = $_POST['dispositivos_nuevos']['nombre'];
-            $cantidades = $_POST['dispositivos_nuevos']['cantidad'];
-
-            for ($i = 0; $i < count($nombres); $i++) {
-                $nombre = $nombres[$i];
-                $cantidad = $cantidades[$i];
-
-                // Validar que los campos no estén vacíos
-                if (!empty($nombre) && !empty($cantidad)) {
-                    // Insertar en la tabla dispositivos_faltante
-                    $sql_faltante = "INSERT INTO dispositivos_faltante (id_solicitud, nombre_dispositivo, cantidad_dispositivo) 
-                                     VALUES (?, ?, ?)";
                     $stmt_faltante = $conn->prepare($sql_faltante);
                     $stmt_faltante->bind_param("isi", $id_solicitud, $nombre, $cantidad);
                     $stmt_faltante->execute();
@@ -152,11 +142,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 }
 ?>
-
-
-
-
-
 
 <!DOCTYPE html>
 <html lang="es">
@@ -296,7 +281,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                 </div>
 
-
                 <div class="">
 
 
@@ -351,7 +335,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </div>
                         </div>
 
-
                         <script>
                             document.addEventListener("DOMContentLoaded", function() {
                                 const addParticipanteButton = document.getElementById("addParticipante");
@@ -375,7 +358,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 });
                             });
                         </script>
-
 
                     </div>
 
@@ -455,9 +437,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     $estado = $dispositivo['estado'];
                                                     $disabled = $estado === 'inactivo' ? 'disabled' : '';
                                                     $style = $estado === 'inactivo' ? 'style="color: gray;"' : '';
+                                                    $cantidad = $dispositivo['cantidad'];
                                                     ?>
-                                                    <option value="<?php echo htmlspecialchars($dispositivo['id_dispositivo']); ?>" <?php echo $disabled; ?> <?php echo $style; ?>>
-                                                        <?php echo htmlspecialchars($dispositivo['nombre_dispositivo']); ?> (<?php echo $estado; ?>)
+                                                    <option value="<?php echo htmlspecialchars($dispositivo['id_dispositivo']); ?>"
+                                                        data-cantidad="<?php echo $cantidad; ?>"
+                                                        <?php echo $disabled; ?> <?php echo $style; ?>>
+                                                        <?php echo htmlspecialchars($dispositivo['nombre_dispositivo']); ?> (<?php echo $estado; ?>, Stock: <?php echo $cantidad; ?>)
                                                     </option>
                                                 <?php endforeach; ?>
                                             </select>
@@ -473,15 +458,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <button type="button" id="addDispositivo" class="w-auto text-white p-[0.2rem] bg-black">+</button>
                                 <button type="button" id="deleteDispositivo" class="w-auto text-white p-1 bg-red-700">-</button>
                             </div>
+                            <!-- Botón para mostrar dispositivos no encontrados -->
+                            <div class="flex justify-start gap-2 m-2">
+                                <button type="button" id="mostrarDispositivosNuevos" class="w-auto text-black border border-black bg-white hover:bg-gray-100">¿No encuentras tu dispositivo?</button>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="section">
+                    <!-- Oculta la sección por defecto -->
+                    <div class="section" id="dispositivos-nuevos-section" style="display:none;">
                         <div class="flex flex-col">
                             <span class="text-black font-bold">Dispositivos que no se encuentran</span>
                             <span>Agregue nombre del dispositivo que no encuentre y la cantidad que necesita</span>
                         </div>
-
                         <div id="dispositivos-nuevos">
                             <table class="min-w-full table-auto border-collapse" id="dispositivosNuevosTable">
                                 <thead>
@@ -515,29 +504,80 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             const deleteDispositivoButton = document.getElementById("deleteDispositivo");
                             const dispositivosTable = document.getElementById("dispositivosTable");
 
-                            const addDispositivoNuevoButton = document.getElementById("addDispositivoNuevo");
-                            const deleteDispositivoNuevoButton = document.getElementById("deleteDispositivoNuevo");
-                            const dispositivosNuevosTable = document.getElementById("dispositivosNuevosTable");
+                            // Función para actualizar los selects y evitar duplicados
+                            function actualizarSelects() {
+                                const selects = dispositivosTable.querySelectorAll('select[name="dispositivos[id_dispositivo][]"]');
+                                const seleccionados = Array.from(selects).map(s => s.value).filter(v => v);
 
+                                selects.forEach(select => {
+                                    Array.from(select.options).forEach(option => {
+                                        if (option.value && seleccionados.includes(option.value) && select.value !== option.value) {
+                                            option.disabled = true;
+                                        } else {
+                                            option.disabled = false;
+                                        }
+                                    });
+                                });
+                            }
+
+                            // Función para validar cantidad según stock
+                            function validarCantidad(input) {
+                                const select = input.closest('tr').querySelector('select[name="dispositivos[id_dispositivo][]"]');
+                                const selectedOption = select.options[select.selectedIndex];
+                                const maxCantidad = parseInt(selectedOption.getAttribute('data-cantidad'), 10);
+                                const valor = parseInt(input.value, 10);
+
+                                if (!isNaN(maxCantidad) && valor > maxCantidad) {
+                                    swal("Cantidad excedida", "No hay suficiente stock para este dispositivo.", "warning");
+                                    input.value = maxCantidad > 0 ? maxCantidad : '';
+                                }
+                            }
+
+                            // Evento para agregar fila
                             addDispositivoButton.addEventListener("click", function() {
                                 const newRow = dispositivosTable.querySelector(".dispositivoRow").cloneNode(true);
                                 const inputs = newRow.querySelectorAll("input, select");
                                 inputs.forEach(input => input.value = "");
                                 dispositivosTable.querySelector("tbody").appendChild(newRow);
+                                actualizarSelects();
+                                // Agrega eventos a los nuevos inputs/selects
+                                newRow.querySelector('select').addEventListener('change', actualizarSelects);
+                                newRow.querySelector('input[type="number"]').addEventListener('input', function() {
+                                    validarCantidad(this);
+                                });
                             });
 
+                            // Evento para eliminar fila
                             deleteDispositivoButton.addEventListener("click", function() {
                                 const rows = dispositivosTable.querySelectorAll("tbody tr");
                                 if (rows.length > 1) {
                                     rows[rows.length - 1].remove();
+                                    actualizarSelects();
                                 }
                             });
+
+                            // Eventos iniciales para selects y cantidad
+                            dispositivosTable.querySelectorAll('select[name="dispositivos[id_dispositivo][]"]').forEach(select => {
+                                select.addEventListener('change', actualizarSelects);
+                            });
+                            dispositivosTable.querySelectorAll('input[type="number"]').forEach(input => {
+                                input.addEventListener('input', function() {
+                                    validarCantidad(this);
+                                });
+                            });
+
+                            // ...resto de tu código para dispositivos nuevos...
+                            const addDispositivoNuevoButton = document.getElementById("addDispositivoNuevo");
+                            const deleteDispositivoNuevoButton = document.getElementById("deleteDispositivoNuevo");
+                            const dispositivosNuevosTable = document.getElementById("dispositivosNuevosTable");
 
                             addDispositivoNuevoButton.addEventListener("click", function() {
                                 const newRow = dispositivosNuevosTable.querySelector(".dispositivoNuevoRow").cloneNode(true);
                                 const inputs = newRow.querySelectorAll("input");
                                 inputs.forEach(input => input.value = "");
                                 dispositivosNuevosTable.querySelector("tbody").appendChild(newRow);
+                                // Agregar evento de validación al nuevo input
+                                newRow.querySelector('input[name="dispositivos_nuevos[nombre][]"]').addEventListener('change', validarNombresNuevos);
                             });
 
                             deleteDispositivoNuevoButton.addEventListener("click", function() {
@@ -546,18 +586,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     rows[rows.length - 1].remove();
                                 }
                             });
+
+                            // Validar que no se repita el nombre en dispositivos no encontrados
+                            function validarNombresNuevos() {
+                                const inputs = Array.from(document.querySelectorAll('input[name="dispositivos_nuevos[nombre][]"]'));
+                                const nombres = inputs.map(input => input.value.trim().toLowerCase()).filter(v => v);
+                                const duplicados = nombres.filter((item, idx) => nombres.indexOf(item) !== idx);
+                                if (duplicados.length > 0) {
+                                    swal("Nombre duplicado", "No puedes ingresar el mismo dispositivo más de una vez.", "warning");
+                                    return false;
+                                }
+                                return true;
+                            }
+
+                            // Al escribir en los inputs, validar duplicados
+                            document.querySelectorAll('input[name="dispositivos_nuevos[nombre][]"]').forEach(input => {
+                                input.addEventListener('change', validarNombresNuevos);
+                            });
+
+                            // Opcional: Validar antes de enviar el formulario
+                            document.querySelector('form').addEventListener('submit', function(e) {
+                                if (!validarNombresNuevos()) {
+                                    e.preventDefault();
+                                }
+                            });
+
+                            // Mostrar sección de dispositivos nuevos al hacer clic en el botón
+                            document.getElementById("mostrarDispositivosNuevos").addEventListener("click", function() {
+                                document.getElementById("dispositivos-nuevos-section").style.display = "block";
+                                this.style.display = "none";
+                            });
                         });
                     </script>
-
                 </div>
-
-
                 <button class=" px-4 py-2 w-full block bg-black hover:bg-black/90  text-white">Enviar</button>
-
             </div>
         </form>
     </div>
-
 </body>
-
 </html>

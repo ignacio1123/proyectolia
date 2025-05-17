@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['iniciar_sesion'])) {
                             Swal.fire({
                                 icon: 'warning',
                                 title: 'Acceso denegado',
-                                text: 'Tu cuenta está en un estado no válido (Pendiente o Inactivo). Por favor, contacta al administrador.',
+                                text: 'Tu cuenta está en un estado no válido (Pendiente o Inactivo). Por favor, contacta al administrador/Director de Carrera.',
                                 confirmButtonText: 'Aceptar'
                             });
                         });
@@ -443,13 +443,13 @@ $conn->close();
         <div class="flex items-center">
             <a href="pantallaPrincipal.php" class="text-xl md:text-2xl font-medium text-white flex items-center">
                 <img src="../public/img/logo Santo Tomas.jpg" alt="Logo" class="w-8 h-8 md:w-10 md:h-10 mr-2 md:mr-3 rounded-md">
-                <span class="hidden sm:inline">Universidad</span>
+                <span class="hidden sm:inline">IPC Santo Tomás</span>
             </a>
         </div>
         <div class="hidden md:flex items-center space-x-6 lg:space-x-8">
             <a href="#" class="nav-link">Inicio</a>
             <a href="#" class="nav-link">LIA</a>
-            <a href="https://www.santotomas.cl/" class="nav-link">Santo Tomas</a>
+            <a href="https://www.santotomas.cl/" class="nav-link">Santo Tomás</a>
         </div>
         <!-- Mobile menu button -->
         <div class="md:hidden">
@@ -463,7 +463,7 @@ $conn->close();
     <div id="mobile-menu" class="mobile-menu">
         <a href="#" class="block">Inicio</a>
         <a href="#" class="block">LIA</a>
-        <a href="https://www.santotomas.cl/" class="block">Santo Tomas</a>
+        <a href="https://www.santotomas.cl/" class="block">Santo Tomás</a>
     </div>
 
     <!-- Main Content -->

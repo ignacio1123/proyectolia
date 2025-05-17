@@ -39,6 +39,95 @@ if (!$result) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+    /* Diseño de tabla similar a vistaDispositivosFaltantes.php */
+    .dataTables_wrapper {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        margin-top: 10px;
+    }
+    table.dataTable thead th {
+        background-color: #f9f9f9;
+        border-bottom: 1px solid #ddd;
+        padding: 10px 18px;
+        text-align: left;
+        font-weight: 600;
+        color: #333;
+    }
+    table.dataTable tbody td {
+        padding: 12px 18px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #444;
+    }
+    .dataTables_filter {
+        margin-bottom: 15px;
+        text-align: right;
+        font-weight: normal;
+    }
+    .dataTables_filter input {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 6px 10px;
+        margin-left: 8px;
+    }
+    </style>
+    <style>
+    @media print {
+        body, html {
+            background: #fff !important;
+        }
+        body * {
+            visibility: hidden !important;
+        }
+        .print-area, .print-area * {
+            visibility: visible !important;
+        }
+        .print-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            margin: 0;
+            padding: 0;
+            background: #fff !important;
+        }
+        .print-area .titulo-impresion {
+            text-align: center !important;
+            font-size: 24px !important;
+            font-weight: bold !important;
+            color: #1e293b !important;
+            margin-top: 30px !important;
+            margin-bottom: 5px !important;
+        }
+        .print-area .subtitulo-impresion {
+            text-align: center !important;
+            margin-bottom: 20px !important;
+            font-size: 15px !important;
+            font-weight: normal !important;
+        }
+        .print-area table {
+            width: 90% !important;
+            border-collapse: collapse !important;
+            font-size: 15px !important;
+            margin: 0 auto !important;
+        }
+        .print-area th, .print-area td {
+            border: 1px solid #222 !important;
+            padding: 6px 12px !important;
+            text-align: left !important;
+        }
+        .print-area th {
+            background: #f5f5f5 !important;
+            color: #222 !important;
+            font-weight: normal !important;
+        }
+        .dt-buttons, .dataTables_filter, .dataTables_info, .dataTables_paginate, .dataTables_length, .bg-black, .volver-panel {
+            display: none !important;
+        }
+    }
+    </style>
 </head>
 <body class="bg-gray-100">
     <!-- Barra de navegación superior -->
@@ -50,40 +139,45 @@ if (!$result) {
             </a>
         </div>
     </div>
-     <!-- Contenedor principal -->
-    <div class="p-8">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Listado de Dispositivos Utilizados en Proyectos</h2>
-        
-    <!-- Tabla de dispositivos solicitados -->
-    <div class="bg-white rounded-lg shadow overflow-x-auto mt-12 p-4">
-        <table id="tablaDispositivosSolicitados" class="min-w-full divide-y divide-gray-200">
-            <thead>
-                <tr>
-                    <th>Numero de Solicitud</th>
-                    <th>Nombre de Proyecto</th>
-                    <th>#</th>
-                    <th>Nombre del Dispositivo</th>
-                    <th>Cantidad Solicitada</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while ($row = $result->fetch_assoc()): ?>
+    <!-- Contenedor principal -->
+    <div class="p-8 print-area">
+        <h2 class="titulo-impresion text-xl font-semibold text-gray-800 mb-4">Listado de Dispositivos Utilizados en Proyectos</h2>
+        <div class="subtitulo-impresion">
+            Dispositivos utilizados por los estudiantes de Santo Tomas Cede Concepción, Laboratorio de innovación Aplicada.
+        </div>
+        <!-- Tabla de dispositivos solicitados -->
+        <div class="bg-white rounded-lg shadow overflow-x-auto mt-12 p-4">
+            <table id="tablaDispositivosSolicitados" class="min-w-full divide-y divide-gray-200">
+                <thead>
                     <tr>
-                        <td><?php echo htmlspecialchars($row['id_solicitud']); ?></td>
-                        <td><?php echo htmlspecialchars($row['nombre_proyecto']); ?></td>
-                        <td><?php echo htmlspecialchars($row['id_dispositivo']); ?></td>
-                        <td><?php echo htmlspecialchars($row['nombre_dispositivo']); ?></td>
-                        <td><?php echo htmlspecialchars($row['cantidad_solicitada']); ?></td>
+                        <th>Numero de Solicitud</th>
+                        <th>Nombre de Proyecto</th>
+                        <th>#</th>
+                        <th>Nombre del Dispositivo</th>
+                        <th>Cantidad Solicitada</th>
                     </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php while ($row = $result->fetch_assoc()): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($row['id_solicitud']); ?></td>
+                            <td><?php echo htmlspecialchars($row['nombre_proyecto']); ?></td>
+                            <td><?php echo htmlspecialchars($row['id_dispositivo']); ?></td>
+                            <td><?php echo htmlspecialchars($row['nombre_dispositivo']); ?></td>
+                            <td><?php echo htmlspecialchars($row['cantidad_solicitada']); ?></td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
-
     <script>
         $(document).ready(function() {
             $('#tablaDispositivosSolicitados').DataTable({
                 dom: 'Bfrtip',
+                paging: false, // Desactiva la paginación
+                lengthChange: false, // Oculta el selector de cantidad por página
+                info: true, // Muestra el texto "Mostrando 1 a ... de ... registros"
                 buttons: [
                     {
                         extend: 'excelHtml5',
@@ -95,9 +189,22 @@ if (!$result) {
                     {
                         extend: 'pdfHtml5',
                         text: 'Descargar PDF',
-                        className: 'bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded',
+                        className: 'bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded mr-2',
                         title: 'Dispositivos Utilizados',
                         messageTop: 'Dispositivos utilizados por los estudiantes de Santo Tomas Cede Concepción, Laboratorio de innovación Aplicada. '
+                    },
+                    {
+                        text: 'Imprimir PDF',
+                        className: 'bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded',
+                        action: function (e, dt, node, config) {
+                            $('.dt-buttons').hide();
+                            setTimeout(function() {
+                                window.print();
+                                setTimeout(function() {
+                                    $('.dt-buttons').show();
+                                }, 500);
+                            }, 200);
+                        }
                     }
                 ],
                 language: {
@@ -112,10 +219,10 @@ if (!$result) {
                     "search": "Buscar:",
                     "zeroRecords": "No se encontraron registros",
                     "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
+                        "first": "",
+                        "last": "",
+                        "next": "",
+                        "previous": ""
                     }
                 }
             });
