@@ -146,8 +146,9 @@ if (!$result) {
             Dispositivos utilizados por los estudiantes de Santo Tomas Cede Concepción, Laboratorio de innovación Aplicada.
         </div>
         <!-- Tabla de dispositivos solicitados -->
-        <div class="bg-white rounded-lg shadow overflow-x-auto mt-12 p-4">
-            <table id="tablaDispositivosSolicitados" class="min-w-full divide-y divide-gray-200">
+        <div class="bg-white rounded-lg shadow mt-12 p-4">
+            <!-- Contenedor SOLO para la tabla, sin overflow-x-auto -->
+            <table id="tablaDispositivosSolicitados" class="min-w-full divide-y divide-gray-200" style="width:100%">
                 <thead>
                     <tr>
                         <th>Numero de Solicitud</th>
@@ -173,11 +174,13 @@ if (!$result) {
     </div>
     <script>
         $(document).ready(function() {
-            $('#tablaDispositivosSolicitados').DataTable({
+            var tabla = $('#tablaDispositivosSolicitados').DataTable({
                 dom: 'Bfrtip',
-                paging: false, // Desactiva la paginación
-                lengthChange: false, // Oculta el selector de cantidad por página
-                info: true, // Muestra el texto "Mostrando 1 a ... de ... registros"
+                paging: false,
+                lengthChange: false,
+                info: true,
+                scrollY: '350px', // SOLO barra vertical interna en la tabla
+                scrollCollapse: true,
                 buttons: [
                     {
                         extend: 'excelHtml5',
@@ -190,20 +193,28 @@ if (!$result) {
                         extend: 'pdfHtml5',
                         text: 'Descargar PDF',
                         className: 'bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded mr-2',
-                        title: 'Dispositivos Utilizados',
-                        messageTop: 'Dispositivos utilizados por los estudiantes de Santo Tomas Cede Concepción, Laboratorio de innovación Aplicada. '
-                    },
-                    {
-                        text: 'Imprimir PDF',
-                        className: 'bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded',
-                        action: function (e, dt, node, config) {
-                            $('.dt-buttons').hide();
-                            setTimeout(function() {
-                                window.print();
-                                setTimeout(function() {
-                                    $('.dt-buttons').show();
-                                }, 500);
-                            }, 200);
+                        title: 'Listado de Dispositivos Utilizados en Proyectos',
+                        messageTop: 'Dispositivos utilizados por los estudiantes de Santo Tomas Cede Concepción, Laboratorio de innovación Aplicada.',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        customize: function (doc) {
+                            doc.styles.tableHeader = {
+                                bold: true,
+                                fontSize: 12,
+                                color: 'black',
+                                fillColor: '#f5f5f5',
+                                alignment: 'center'
+                            };
+                            doc.styles.title = {
+                                fontSize: 18,
+                                bold: true,
+                                alignment: 'center',
+                                color: '#1e293b',
+                                margin: [0, 0, 0, 10]
+                            };
+                            doc.content[1].margin = [0, 0, 0, 10];
+                            doc.content[1].alignment = 'center';
+                            doc.content[2].table.widths = ['15%', '35%', '10%', '25%', '15%'];
                         }
                     }
                 ],
@@ -225,6 +236,11 @@ if (!$result) {
                         "previous": ""
                     }
                 }
+            });
+
+            // Botón personalizado para imprimir PDF (exportar PDF)
+            $('#btnImprimirPDF').on('click', function() {
+                tabla.button('.buttons-pdf').trigger();
             });
         });
     </script>
