@@ -236,6 +236,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
     </style>
+    <link rel="stylesheet" href="/proyectolia/final1.0/public/css/responsive.css">
 </head>
 
 <body>

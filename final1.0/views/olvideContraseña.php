@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Olvidé mi Contraseña</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/proyectolia/final1.0/public/css/responsive.css">
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
     <div class="bg-white shadow-lg rounded-lg p-6 max-w-md w-full">

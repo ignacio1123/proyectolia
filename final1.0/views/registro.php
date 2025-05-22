@@ -85,6 +85,7 @@
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="/proyectolia/final1.0/public/css/responsive.css">
 </head>
 <body>
     <div class="container">

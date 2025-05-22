@@ -66,6 +66,7 @@ if ($stmt) {
     <title>Página Principal (Alumno)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../public/css/form.css">
+    <link rel="stylesheet" href="/proyectolia/final1.0/public/css/responsive.css">
 </head>
 
 <style>

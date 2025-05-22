@@ -98,6 +98,7 @@ while ($rowLider = $liderQuery->fetch_assoc()) {
     <title>Cotización Dispositivos Faltantes</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/proyectolia/final1.0/public/css/responsive.css">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 </head>

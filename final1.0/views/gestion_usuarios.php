@@ -105,6 +105,7 @@ $result = $conn->query($sql);
     <title>Gestión de Usuarios</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/proyectolia/final1.0/public/css/responsive.css">
 </head>
 
 <body class="bg-gray-100">

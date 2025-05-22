@@ -1,0 +1,70 @@
+/* @media (max-width: 768px) {
+    .p-8 { padding: 1rem !important; }
+    .flex { flex-direction: column !important; }
+    table { font-size: 0.9rem; }
+    .gap-10 { gap: 1rem !important; }
+    .w-full { width: 100% !important; }
+    /* Agrega aquí más reglas según tus necesidades */
+/* }
+
+/* Teléfonos pequeños (hasta 480px) */
+/* @media (max-width: 480px) {
+    .p-8 { padding: 0.5rem !important; }
+    .gap-10 { gap: 0.5rem !important; }
+    .text-2xl { font-size: 1.2rem !important; }
+    .text-xl { font-size: 1rem !important; }
+    table, thead, tbody, th, td, tr { display: block; width: 100% !important; }
+    th, td { padding: 0.5rem !important; }
+    .flex { flex-direction: column !important; }
+    .w-full { width: 100% !important; }
+    .px-4, .py-2 { padding-left: 0.5rem !important; padding-right: 0.5rem !important; padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+    .mb-4, .mb-6 { margin-bottom: 0.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .shadow { box-shadow: none !important; }
+    /* Oculta columnas menos importantes si lo deseas */
+/* }
+
+/* Tablets (481px a 1024px) */
+/* @media (min-width: 481px) and (max-width: 1024px) {
+    .p-8 { padding: 1rem !important; }
+    .gap-10 { gap: 1rem !important; }
+    .text-2xl { font-size: 1.5rem !important; }
+    .text-xl { font-size: 1.2rem !important; }
+    table { font-size: 1rem !important; }
+    .flex { flex-direction: column !important; }
+    .w-full { width: 100% !important; }
+    .mb-4, .mb-6 { margin-bottom: 1rem !important; }
+}
+
+/* Pantallas grandes (más de 1024px) */
+/* @media (min-width: 1025px) {
+    .p-8 { padding: 2rem !important; }
+    .gap-10 { gap: 2rem !important; }
+    .text-2xl { font-size: 2rem !important; }
+    .text-xl { font-size: 1.5rem !important; }
+    table { font-size: 1.1rem !important; }
+    .flex { flex-direction: row !important; }
+    .w-full { width: 100% !important; }
+}
+
+/* Ajustes generales para tablas responsivas */
+/* @media (max-width: 768px) {
+    table, thead, tbody, th, td, tr { display: block; width: 100% !important; }
+    th, td { box-sizing: border-box; }
+    thead tr { display: none; }
+    tr { margin-bottom: 1rem; }
+    td { border: none; border-bottom: 1px solid #e5e7eb; position: relative; padding-left: 50%; }
+    td:before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 45%;
+        padding-left: 0.5rem;
+        white-space: nowrap;
+        font-weight: bold;
+        color: #00796b;
+        content: attr(data-label);
+    }
+}*/
+
+/* Puedes seguir agregando reglas específicas para otros elementos */

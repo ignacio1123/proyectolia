@@ -12,6 +12,8 @@ if ($conn->connect_error) {
 }
 
 // Manejo de formularios
+$mostrarModalExiste = false; // Variable para controlar el modal
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['reducir'])) {
         $id_dispositivo = $_POST['id_dispositivo'];
@@ -33,13 +35,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $stmt_update->close();
                 }
 
-                // Eliminar dispositivo si la cantidad llega a 0
+                // Si la cantidad llega a 0, poner en inactivo en vez de eliminar
                 if ($cantidad_actual - $cantidad_eliminar <= 0) {
-                    $sql_delete = "DELETE FROM dispositivos WHERE id_dispositivo = ?";
-                    if ($stmt_delete = $conn->prepare($sql_delete)) {
-                        $stmt_delete->bind_param("i", $id_dispositivo);
-                        $stmt_delete->execute();
-                        $stmt_delete->close();
+                    $sql_inactivo = "UPDATE dispositivos SET estado = 'inactivo', cantidad = 0 WHERE id_dispositivo = ?";
+                    if ($stmt_inactivo = $conn->prepare($sql_inactivo)) {
+                        $stmt_inactivo->bind_param("i", $id_dispositivo);
+                        $stmt_inactivo->execute();
+                        $stmt_inactivo->close();
                     }
                 }
             }
@@ -49,7 +51,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $id_dispositivo = $_POST['id_dispositivo'];
         $cantidad_agregar = intval($_POST['cantidad_agregar']);
         if ($cantidad_agregar > 0) {
-            $sql_update = "UPDATE dispositivos SET cantidad = cantidad + ? WHERE id_dispositivo = ?";
+            // Consultar el estado actual
+            $sql_estado = "SELECT estado FROM dispositivos WHERE id_dispositivo = ?";
+            if ($stmt_estado = $conn->prepare($sql_estado)) {
+                $stmt_estado->bind_param("i", $id_dispositivo);
+                $stmt_estado->execute();
+                $stmt_estado->bind_result($estado_actual);
+                $stmt_estado->fetch();
+                $stmt_estado->close();
+            }
+
+            // Si está inactivo, activar al aumentar cantidad
+            if ($estado_actual === 'inactivo') {
+                $sql_update = "UPDATE dispositivos SET cantidad = cantidad + ?, estado = 'activo' WHERE id_dispositivo = ?";
+            } else {
+                $sql_update = "UPDATE dispositivos SET cantidad = cantidad + ? WHERE id_dispositivo = ?";
+            }
             if ($stmt_update = $conn->prepare($sql_update)) {
                 $stmt_update->bind_param("ii", $cantidad_agregar, $id_dispositivo);
                 $stmt_update->execute();
@@ -58,23 +75,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } elseif (isset($_POST['cambiar_estado'])) {
         $id_dispositivo = $_POST['id_dispositivo'];
-        $nuevo_estado = $_POST['nuevo_estado']; // Ahora este valor siempre estará definido
+        $nuevo_estado = $_POST['nuevo_estado'];
         $sql_estado = "UPDATE dispositivos SET estado = ? WHERE id_dispositivo = ?";
         if ($stmt_estado = $conn->prepare($sql_estado)) {
             $stmt_estado->bind_param("si", $nuevo_estado, $id_dispositivo);
             $stmt_estado->execute();
             $stmt_estado->close();
         }
-    } else {
-        $nombre_dispositivo = $_POST['nombre_dispositivo'];
-        $cantidad = $_POST['cantidad'];
+    } elseif (isset($_POST['agregar'])) {
+        $nombre_dispositivo = trim($_POST['nombre_dispositivo']);
+        $cantidad = intval($_POST['cantidad']);
         $estado = $_POST['estado'];
-        $almacen = $_POST['almacen'];
-        $sql_insert = "INSERT INTO dispositivos (nombre_dispositivo, cantidad, estado, almacen) VALUES (?, ?, ?, ?)";
-        if ($stmt = $conn->prepare($sql_insert)) {
-            $stmt->bind_param("siss", $nombre_dispositivo, $cantidad, $estado, $almacen);
-            $stmt->execute();
-            $stmt->close();
+        $almacen = trim($_POST['almacen']);
+
+        // Verificar si ya existe un dispositivo con el mismo nombre (sin importar el almacén)
+        $sql_check = "SELECT COUNT(*) FROM dispositivos WHERE nombre_dispositivo = ?";
+        if ($stmt_check = $conn->prepare($sql_check)) {
+            $stmt_check->bind_param("s", $nombre_dispositivo);
+            $stmt_check->execute();
+            $stmt_check->bind_result($existe);
+            $stmt_check->fetch();
+            $stmt_check->close();
+
+            if ($existe > 0) {
+                $mostrarModalExiste = true; // Activar modal
+            } else {
+                $sql_insert = "INSERT INTO dispositivos (nombre_dispositivo, cantidad, estado, almacen) VALUES (?, ?, ?, ?)";
+                if ($stmt = $conn->prepare($sql_insert)) {
+                    $stmt->bind_param("siss", $nombre_dispositivo, $cantidad, $estado, $almacen);
+                    $stmt->execute();
+                    $stmt->close();
+                }
+            }
         }
     }
 }
@@ -95,6 +127,7 @@ $result = $conn->query($sql);
 
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/proyectolia/final1.0/public/css/responsive.css">
 </head>
 
 <body class="bg-gray-100">
@@ -198,7 +231,8 @@ $result = $conn->query($sql);
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
                             $estado = $row['estado'];
-                            $disabled = $estado === 'inactivo' ? 'disabled' : '';
+                            $disabled_reducir = $estado === 'inactivo' ? 'disabled' : '';
+                            $disabled_aumentar = ''; // Siempre habilitado
                             echo "<tr class='hover:bg-gray-100 even:bg-gray-50'>
                         <td class='border border-gray-100 px-4 py-2'>{$row['id_dispositivo']}</td>
                         <td class='border border-gray-100 px-4 py-2'>{$row['nombre_dispositivo']}</td>
@@ -208,14 +242,14 @@ $result = $conn->query($sql);
                             <!-- Botón para reducir cantidad -->
                             <form method='POST' action='' class='inline'>
                                 <input type='hidden' name='id_dispositivo' value='{$row['id_dispositivo']}'>
-                                <input type='number' name='cantidad_eliminar' min='1' max='{$row['cantidad']}' placeholder='Cantidad' class='p-1 rounded border w-16' $disabled>
-                                <button type='submit' name='reducir' class='bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600' $disabled>Reducir</button>
+                                <input type='number' name='cantidad_eliminar' min='1' max='{$row['cantidad']}' placeholder='Cantidad' class='p-1 rounded border w-16' $disabled_reducir>
+                                <button type='submit' name='reducir' class='bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600' $disabled_reducir>Reducir</button>
                             </form>
                             <!-- Botón para aumentar cantidad -->
                             <form method='POST' action='' class='inline ml-2'>
                                 <input type='hidden' name='id_dispositivo' value='{$row['id_dispositivo']}'>
-                                <input type='number' name='cantidad_agregar' min='1' placeholder='Cantidad' class='p-1 rounded border w-16' $disabled>
-                                <button type='submit' name='aumentar' class='bg-[#4CAF50] text-white px-2 py-1 rounded hover:bg-[#388E3C]' $disabled>Aumentar</button>
+                                <input type='number' name='cantidad_agregar' min='1' placeholder='Cantidad' class='p-1 rounded border w-16' $disabled_aumentar>
+                                <button type='submit' name='aumentar' class='bg-[#4CAF50] text-white px-2 py-1 rounded hover:bg-[#388E3C]' $disabled_aumentar>Aumentar</button>
                             </form>
                             <!-- Botones para cambiar estado -->
                             <form method='POST' action='' class='inline ml-2'>
@@ -241,6 +275,33 @@ $result = $conn->query($sql);
         </div>
 
     </div>
+
+    <!-- Modal de dispositivo existente -->
+    <?php if ($mostrarModalExiste): ?>
+    <div id="modalExiste" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+        <div class="bg-white rounded-lg shadow-lg p-8 max-w-sm w-full text-center relative animate-fade-in">
+            <button onclick="document.getElementById('modalExiste').style.display='none'" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>
+            <div class="flex flex-col items-center">
+                <svg class="w-16 h-16 text-red-400 mb-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="white"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 9l-6 6m0-6l6 6" />
+                </svg>
+                <h2 class="text-xl font-semibold text-red-600 mb-2">¡Atención!</h2>
+                <p class="text-gray-700 mb-4">El dispositivo ya existe en este almacén.</p>
+                <button onclick="document.getElementById('modalExiste').style.display='none'" class="bg-[#00796b] hover:bg-[#005a4f] text-white px-6 py-2 rounded transition duration-200">Cerrar</button>
+            </div>
+        </div>
+    </div>
+    <style>
+    @keyframes fade-in {
+        from { opacity: 0; transform: scale(0.95);}
+        to { opacity: 1; transform: scale(1);}
+    }
+    .animate-fade-in {
+        animation: fade-in 0.2s ease;
+    }
+    </style>
+    <?php endif; ?>
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
