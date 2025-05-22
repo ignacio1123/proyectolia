@@ -25,6 +25,7 @@ if (!$result) {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,7 +46,7 @@ if (!$result) {
             padding: 15px;
             margin-top: 10px;
         }
-        
+
         table.dataTable thead th {
             background-color: #f9f9f9;
             border-bottom: 1px solid #ddd;
@@ -54,39 +55,39 @@ if (!$result) {
             font-weight: 600;
             color: #333;
         }
-        
+
         table.dataTable tbody td {
             padding: 12px 18px;
             border-bottom: 1px solid #f0f0f0;
             color: #444;
         }
-        
+
         .dataTables_filter {
             margin-bottom: 15px;
             text-align: right;
             font-weight: normal;
         }
-        
+
         .dataTables_filter input {
             border: 1px solid #ddd;
             border-radius: 4px;
             padding: 6px 10px;
             margin-left: 8px;
         }
-        
+
         .pagination-info {
             font-size: 0.9rem;
             color: #666;
             margin-top: 15px;
         }
-        
+
         .pagination-buttons {
             display: flex;
             justify-content: flex-end;
             margin-top: 15px;
             gap: 5px;
         }
-        
+
         .pagination-button {
             border: 1px solid #ddd;
             background-color: #fff;
@@ -95,11 +96,11 @@ if (!$result) {
             border-radius: 4px;
             cursor: pointer;
         }
-        
+
         .pagination-button.active {
             background-color: #f0f0f0;
         }
-        
+
         .action-button {
             background-color: white;
             border: 1px solid #ccc;
@@ -110,18 +111,19 @@ if (!$result) {
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        
+
         .action-button:hover {
             background-color: #f0f0f0;
         }
     </style>
 </head>
+
 <body class="bg-gray-100">
     <!-- Barra de navegación superior -->
-    <div class="bg-black text-white p-4 shadow-md flex justify-between items-center">
+    <div class="bg-[#00796b] text-white p-4 shadow-md flex justify-between items-center">
         <h1 class="text-2xl font-semibold">Dispositivos Faltantes</h1>
         <div>
-            <a href="/proyectolia/final1.0/views/pantallaDirector.php" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
+            <a href="/proyectolia/final1.0/views/pantallaDirector.php" class="bg-[#388E3C] hover:bg-[#2e7031] text-white font-semibold py-2 px-4 rounded transition duration-300">
                 Volver al Panel
             </a>
         </div>
@@ -129,37 +131,36 @@ if (!$result) {
 
     <!-- Contenedor principal -->
     <div class="p-8">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Listado de Dispositivos Faltantes</h2>
-        
-        <!-- Botones de acción alineados a la izquierda -->
-        <div class="mb-4 flex gap-2">
-            <button id="downloadXLSX" class="action-button">
-                Descargar XLSX
-            </button>
-            <button id="downloadPDF" class="action-button">
-                Descargar PDF
-            </button>
-            <button id="printTable" class="action-button">
-                Imprimir
-            </button>
-        </div>
+        <h2 class="text-xl font-semibold text-[#00796b] mb-4">Listado de Dispositivos Faltantes</h2>
 
         <!-- Tabla de dispositivos faltantes -->
-        <div class="bg-white rounded-lg shadow">
+        <div class="bg-white rounded-lg shadow p-4">
+            <!-- Botones de acción dentro del cuadro de la tabla -->
+            <div class="flex gap-2 mb-2">
+                <button id="downloadXLSX" class="bg-white border border-gray-400 text-black font-semibold px-4 py-2 rounded shadow-sm transition duration-200 hover:bg-gray-100">
+                    Descargar XLSX
+                </button>
+                <button id="downloadPDF" class="bg-white border border-gray-400 text-black font-semibold px-4 py-2 rounded shadow-sm transition duration-200 hover:bg-gray-100">
+                    Descargar PDF
+                </button>
+                <button id="printTable" class="bg-white border border-gray-400 text-black font-semibold px-4 py-2 rounded shadow-sm transition duration-200 hover:bg-gray-100">
+                    Imprimir
+                </button>
+            </div>
             <table id="tablaDispositivosFaltantes" class="min-w-full divide-y divide-gray-200">
-                <thead>
+                <thead class="bg-[#00796b]">
                     <tr>
-                        <th style="width: 80px; min-width: 60px; max-width: 100px; font-size: 0.95em;">Numero de Solicitud</th>
-                        <th style="width: 600px; max-width: 900px;">Nombre de Proyecto</th>
-                        <th>#</th>
-                        <th>Nombre del Dispositivo</th>
-                        <th>Cantidad Solicitada</th>
-                        <th>Tipo de Estado</th>
+                        <th class="text-white" style="width: 80px; min-width: 60px; max-width: 100px; font-size: 0.95em;">Numero de Solicitud</th>
+                        <th class="text-white" style="width: 600px; max-width: 900px;">Nombre de Proyecto</th>
+                        <th class="text-white">#</th>
+                        <th class="text-white">Nombre del Dispositivo</th>
+                        <th class="text-white">Cantidad Solicitada</th>
+                        <th class="text-white">Tipo de Estado</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php while ($row = $result->fetch_assoc()): ?>
-                        <tr>
+                        <tr class="even:bg-[#E0F2F1] text-black">
                             <td style="width: 80px; font-size: 0.95em;"><?php echo htmlspecialchars($row['id_solicitud']); ?></td>
                             <td style="max-width: 900px; white-space: normal; word-break: break-word;">
                                 <?php echo htmlspecialchars($row['nombre_proyecto']); ?>
@@ -168,22 +169,22 @@ if (!$result) {
                             <td><?php echo htmlspecialchars($row['nombre_dispositivo']); ?></td>
                             <td><?php echo htmlspecialchars($row['cantidad_dispositivo']); ?></td>
                             <td>
-                                <select class="estado-dispositivo" data-id="<?php echo $row['id_dispositivo']; ?>">
-                                    <option value="Básica" <?php if($row['Ubicacion']=='Básica') echo 'selected'; ?>>Por Comprar</option>
-                                    <option value="Comprado" <?php if($row['Ubicacion']=='Comprado') echo 'selected'; ?>>Comprado</option>
-                                    <option value="En LIA Entregado" <?php if($row['Ubicacion']=='En LIA Entregado') echo 'selected'; ?>>En LIA Entregado</option>
-                                    <option value="Rechazado" <?php if($row['Ubicacion']=='Rechazado') echo 'selected'; ?>>Rechazado</option>
+                                <select class="estado-dispositivo text-black bg-white border border-gray-300 rounded" data-id="<?php echo $row['id_dispositivo']; ?>">
+                                    <option value="Básica" <?php if ($row['Ubicacion'] == 'Básica') echo 'selected'; ?>>Por Comprar</option>
+                                    <option value="Comprado" <?php if ($row['Ubicacion'] == 'Comprado') echo 'selected'; ?>>Comprado</option>
+                                    <option value="En LIA Entregado" <?php if ($row['Ubicacion'] == 'En LIA Entregado') echo 'selected'; ?>>En el LIA Entregado</option>
+                                    <option value="Rechazado" <?php if ($row['Ubicacion'] == 'Rechazado') echo 'selected'; ?>>Rechazado</option>
                                 </select>
                             </td>
                         </tr>
                     <?php endwhile; ?>
                 </tbody>
             </table>
-            
+
             <!-- Información de paginación y botones como en la imagen -->
             <div class="p-4">
                 <div class="flex justify-between items-center">
-                    <div class="pagination-info">
+                    <div class="pagination-info text-[#263238]">
                         Mostrando <span id="startRecord">1</span> a <span id="endRecord">1</span> de <span id="totalRecords">1</span> registros
                     </div>
                     <div class="pagination-buttons">
@@ -202,15 +203,16 @@ if (!$result) {
             size: auto;
             margin: 15mm;
         }
-        
+
         body * {
             visibility: hidden;
         }
-        
-        #printArea, #printArea * {
+
+        #printArea,
+        #printArea * {
             visibility: visible !important;
         }
-        
+
         #printArea {
             position: absolute;
             left: 0;
@@ -218,55 +220,62 @@ if (!$result) {
             width: 100%;
             padding: 15px;
         }
-        
+
         #printArea table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
             font-family: Arial, sans-serif;
         }
-        
-        #printArea table th, #printArea table td {
+
+        #printArea table th,
+        #printArea table td {
             border: 1px solid #333;
             padding: 8px;
             text-align: left;
         }
-        
+
         #printArea table th {
-            background-color: #ffff00 !important; /* Amarillo como en el PDF */
+            background-color: #ffff00 !important;
+            /* Amarillo como en el PDF */
             color: #000;
             font-weight: bold;
         }
-        
+
         #printHeader h2 {
             font-size: 16pt !important;
             margin-bottom: 8px !important;
             font-weight: bold !important;
         }
-        
+
         #printHeader p {
             font-size: 11pt !important;
             margin-bottom: 20px !important;
         }
-        
+
         /* Ocultar elementos de DataTables que no queremos imprimir */
-        .dataTables_filter, .dataTables_info, .dataTables_paginate, 
-        .dataTables_length, .dataTables_scroll, .no-print {
+        .dataTables_filter,
+        .dataTables_info,
+        .dataTables_paginate,
+        .dataTables_length,
+        .dataTables_scroll,
+        .no-print {
             display: none !important;
         }
-        
+
         /* Asegurar que la impresión sea en color */
         * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
         }
 
-        #printArea table td, #printArea table th {
+        #printArea table td,
+        #printArea table th {
             white-space: normal !important;
             word-break: break-word !important;
         }
     </style>
-    
+
     <!-- Div oculto que se usará para imprimir -->
     <div id="printArea" style="display: none;">
         <div id="printHeader">
@@ -308,7 +317,7 @@ if (!$result) {
                 scrollY: '500px', // Scroll vertical para tablas grandes
                 scrollCollapse: true // Colapsar el scroll cuando no sea necesario
             });
-            
+
             // Actualizar contadores de registros
             function updateRecordInfo() {
                 const totalRecords = table.rows().count();
@@ -317,17 +326,19 @@ if (!$result) {
                 $('#totalRecords').text(totalRecords);
                 $('#btnPagina').text('1');
             }
-            
+
             // Inicializar contadores
             updateRecordInfo();
-            
+
             // Desactivamos botones de paginación ya que mostramos todos los registros
             $('#btnAnterior').prop('disabled', true).addClass('opacity-50');
             $('#btnSiguiente').prop('disabled', true).addClass('opacity-50');
-            
+
             // Actualizar info cuando se filtra
             table.on('search.dt', function() {
-                const filteredRecords = table.rows({search:'applied'}).count();
+                const filteredRecords = table.rows({
+                    search: 'applied'
+                }).count();
                 $('#endRecord').text(filteredRecords);
                 $('#totalRecords').text(table.rows().count());
             });
@@ -337,7 +348,10 @@ if (!$result) {
         $(document).on('change', '.estado-dispositivo', function() {
             var id = $(this).data('id');
             var estado = $(this).val();
-            $.post('actualizar_estado.php', {id: id, estado: estado});
+            $.post('actualizar_estado.php', {
+                id: id,
+                estado: estado
+            });
         });
 
         // Función para imprimir la tabla
@@ -347,7 +361,9 @@ if (!$result) {
             printTableBody.innerHTML = '';
 
             // Llenar la tabla de impresión con los datos actuales (incluyendo filtrados)
-            table.rows({ search: 'applied' }).every(function(rowIdx) {
+            table.rows({
+                search: 'applied'
+            }).every(function(rowIdx) {
                 const data = this.node().children;
                 const row = document.createElement('tr');
                 for (let i = 0; i < data.length; i++) {
@@ -376,7 +392,9 @@ if (!$result) {
 
         // Descargar como PDF
         document.getElementById('downloadPDF').addEventListener('click', function() {
-            const { jsPDF } = window.jspdf;
+            const {
+                jsPDF
+            } = window.jspdf;
             const doc = new jsPDF();
 
             // Mensaje personalizado centrado
@@ -399,7 +417,9 @@ if (!$result) {
                 headers.push($(this).text());
             });
             const body = [];
-            table.rows({ search: 'applied' }).every(function(rowIdx) {
+            table.rows({
+                search: 'applied'
+            }).every(function(rowIdx) {
                 const cells = this.node().children;
                 const row = [];
                 for (let i = 0; i < cells.length; i++) {
@@ -417,13 +437,23 @@ if (!$result) {
                 head: [headers],
                 body: body,
                 startY: 30,
-                styles: { fontSize: 10 },
-                headStyles: { fillColor: [255, 255, 0], textColor: [0, 0, 0] },
+                styles: {
+                    fontSize: 10
+                },
+                headStyles: {
+                    fillColor: [255, 255, 0],
+                    textColor: [0, 0, 0]
+                },
                 columnStyles: {
-                    1: { cellWidth: 80, minCellWidth: 80, maxCellWidth: 120, halign: 'left' } // 1 es la columna "Nombre de Proyecto"
+                    1: {
+                        cellWidth: 80,
+                        minCellWidth: 80,
+                        maxCellWidth: 120,
+                        halign: 'left'
+                    } // 1 es la columna "Nombre de Proyecto"
                 },
                 // Permitir que el texto haga salto de línea
-                didParseCell: function (data) {
+                didParseCell: function(data) {
                     data.cell.styles.cellPadding = 3;
                 }
             });
@@ -453,7 +483,9 @@ if (!$result) {
             });
             ws_data.push(headers);
             // Filas
-            table.rows({ search: 'applied' }).every(function(rowIdx) {
+            table.rows({
+                search: 'applied'
+            }).every(function(rowIdx) {
                 const cells = this.node().children;
                 const row = [];
                 for (let i = 0; i < cells.length; i++) {
@@ -474,4 +506,5 @@ if (!$result) {
         });
     </script>
 </body>
+
 </html>

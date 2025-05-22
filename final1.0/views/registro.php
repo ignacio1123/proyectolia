@@ -16,14 +16,16 @@
         }
         .container {
             background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 24px 28px;
+            border-radius: 10px;
+            box-shadow: 0 0 16px rgba(0,0,0,0.10);
             width: 100%;
             max-width: 400px;
         }
         h2 {
             text-align: center;
+            color: #00796b;
+            margin-bottom: 18px;
         }
         form {
             display: flex;
@@ -31,64 +33,90 @@
         }
         label {
             margin-top: 10px;
+            color: #263238;
+            font-weight: 500;
         }
-        input, select, button {
+        input, select {
             padding: 8px;
             margin-top: 5px;
-            border: 1px solid #ccc;
+            border: 1px solid #bdbdbd;
             border-radius: 4px;
+            background: #f9f9f9;
+            color: #263238;
+            font-size: 1em;
         }
-        button {
-            background-color: red;
+        input:focus, select:focus {
+            outline: 2px solid #4CAF50;
+            background: #fff;
+        }
+        .btn-registrar {
+            background-color: #4CAF50;
             color: #fff;
             border: none;
+            font-weight: 600;
             cursor: pointer;
-            margin-top: 15px;
+            margin-top: 18px;
+            padding: 10px 0;
+            border-radius: 4px;
+            transition: background 0.2s;
         }
-        button:hover {
-            background-color: #218838;
+        .btn-registrar:hover {
+            background-color: #388E3C;
+        }
+        .btn-volver {
+            background-color: #4CAF50;
+            color: #263238;
+            font-weight: 600;
+            padding: 8px 24px;
+            border-radius: 4px;
+            transition: background 0.2s;
+            display: inline-block;
+            margin-bottom: 18px;
+            text-decoration: none;
+        }
+        .btn-volver:hover {
+            background-color: #388E3C;
         }
         .message {
             margin-top: 10px;
             text-align: center;
-            color: red; 
+            color: #F44336;
+            font-weight: 500;
         }
-
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="container">
-    <div class="w-full sm:w-auto text-center sm:text-right mt-4 sm:mt-0">
-        <a href="../views/pantallaPrincipal.php" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
-            Volver atrás
-        </a>
-    </div>
+        <div class="w-full text-center mb-2">
+            <a href="../views/pantallaPrincipal.php" class="btn-volver">
+                Volver atrás
+            </a>
+        </div>
         <h2>Registro de Usuarios</h2>
         <form action="" method="post">
             <label for="nombre">Nombre:</label>
             <input type="text" name="nombre" id="nombre" required>
-            
+
             <label for="apellido">Apellido:</label>
             <input type="text" name="apellido" id="apellido" required>
-            
+
             <label for="email">Email:</label>
             <input type="email" name="email" id="email" required>
-            
+
             <label for="password">Contraseña:</label>
             <input type="password" name="password" id="password" required>
-            
+
             <label for="rol">Rol:</label>
             <select name="rol" id="rol" required>
-                <!--<option value="administrador">Administrador</option>!-->
                 <option value="director">Director</option>
                 <option value="estudiante">Estudiante</option>
             </select>
-            
+
             <label for="rut">RUT:</label>
             <input type="text" name="rut" id="rut" required>
-            
-            <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
+
+            <button type="submit" class="btn-registrar">
                 Registrar
             </button>
         </form>

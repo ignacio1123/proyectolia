@@ -92,80 +92,83 @@ while ($rowLider = $liderQuery->fetch_assoc()) {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Cotización Dispositivos Faltantes</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 </head>
+
 <body class="bg-gray-100 min-h-screen flex flex-col items-center">
     <div class="w-full max-w-6xl mt-10 bg-white rounded-lg shadow-lg p-8">
-        <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Cotización de Dispositivos Faltantes</h1>
+        <h1 class="text-2xl font-bold text-center mb-6 text-[#00796b]">Cotización de Dispositivos Faltantes</h1>
         <!-- Formulario de filtrado -->
         <form method="get" class="mb-6 flex flex-wrap gap-4 justify-center">
-            <select name="nombre_proyecto" class="px-3 py-2 border rounded">
-                <option value="">Nombre Proyecto</option>
+            <select name="nombre_proyecto" class="px-3 py-2 border rounded bg-white text-black">
+                <option value="" class="text-black">Nombre Proyecto</option>
                 <?php foreach ($proyectos as $proy): ?>
-                    <option value="<?php echo htmlspecialchars($proy); ?>" <?php if($nombre_proyecto==$proy) echo "selected"; ?>>
+                    <option value="<?php echo htmlspecialchars($proy); ?>" <?php if ($nombre_proyecto == $proy) echo "selected"; ?> class="text-black">
                         <?php echo htmlspecialchars($proy); ?>
                     </option>
                 <?php endforeach; ?>
             </select>
-            <select name="proveedor" class="px-3 py-2 border rounded">
-                <option value="">Proveedor</option>
+            <select name="proveedor" class="px-3 py-2 border rounded bg-white text-black">
+                <option value="" class="text-black">Proveedor</option>
                 <?php foreach ($proveedores as $prov): ?>
-                    <option value="<?php echo htmlspecialchars($prov); ?>" <?php if($proveedor==$prov) echo "selected"; ?>>
+                    <option value="<?php echo htmlspecialchars($prov); ?>" <?php if ($proveedor == $prov) echo "selected"; ?> class="text-black">
                         <?php echo htmlspecialchars($prov); ?>
                     </option>
                 <?php endforeach; ?>
             </select>
-            <select name="ubicacion" class="px-3 py-2 border rounded">
-                <option value="">Tipo de Estado</option>
-                <option value="Por Comprar" <?php if($ubicacion=="Por Comprar") echo "selected"; ?>>Por Comprar</option>
-                <option value="Comprado" <?php if($ubicacion=="Comprado") echo "selected"; ?>>Comprado</option>
-                <option value="En LIA Entregado" <?php if($ubicacion=="En LIA Entregado") echo "selected"; ?>>En LIA Entregado</option>
-                <option value="Rechazado" <?php if($ubicacion=="Rechazado") echo "selected"; ?>>Rechazado</option>
+            <select name="ubicacion" class="px-3 py-2 border rounded bg-white text-black">
+                <option value="" class="text-black">Tipo de Estado</option>
+                <option value="Por Comprar" <?php if ($ubicacion == "Por Comprar") echo "selected"; ?> class="text-black">Por Comprar</option>
+                <option value="Comprado" <?php if ($ubicacion == "Comprado") echo "selected"; ?> class="text-black">Comprado</option>
+                <option value="En LIA Entregado" <?php if ($ubicacion == "En LIA Entregado") echo "selected"; ?> class="text-black">En LIA Entregado</option>
+                <option value="Rechazado" <?php if ($ubicacion == "Rechazado") echo "selected"; ?> class="text-black">Rechazado</option>
             </select>
-            <select name="lider_proyecto" class="px-3 py-2 border rounded">
-                <option value="">Líder de Proyecto</option>
+            <select name="lider_proyecto" class="px-3 py-2 border rounded bg-white text-black">
+                <option value="" class="text-black">Líder de Proyecto</option>
                 <?php foreach ($lideres as $lider): ?>
-                    <option value="<?php echo htmlspecialchars($lider); ?>" <?php if($lider_proyecto==$lider) echo "selected"; ?>>
+                    <option value="<?php echo htmlspecialchars($lider); ?>" <?php if ($lider_proyecto == $lider) echo "selected"; ?> class="text-black">
                         <?php echo htmlspecialchars($lider); ?>
                     </option>
                 <?php endforeach; ?>
             </select>
-            <button type="submit" class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">Filtrar</button>
-            <a href="CotizacionesDIpositivos.php" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Limpiar</a>
+            <button type="submit" class="bg-[#4CAF50] hover:bg-[#43A047] text-white px-4 py-2 rounded transition">Filtrar</button>
+            <a href="CotizacionesDIpositivos.php" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 text-black">Limpiar</a>
         </form>
-        <div class="overflow-x-auto" style="max-height: 500px; overflow-y:auto;">
-            <table class="min-w-full table-auto border-collapse bg-gray-50">
-                <thead class="bg-black/90">
+        <div class="overflow-x-auto bg-white rounded-lg shadow mt-4">
+            <table id="tablaCotizacionDispositivos" class="min-w-full">
+                <thead class="bg-[#00796b]">
                     <tr>
-                        <th class="px-4 py-2 text-white"># Solicitud</th>
-                        <th class="px-4 py-2 text-white">Nombre Proyecto</th>
-                        <th class="px-4 py-2 text-white">Líder Proyecto</th>
-                        <th class="px-4 py-2 text-white">ID Dispositivo</th>
-                        <th class="px-4 py-2 text-white">Nombre Dispositivo</th>
-                        <th class="px-4 py-2 text-white">Cantidad Faltante</th>
-                        <th class="px-4 py-2 text-white">Proveedor</th>
-                        <th class="px-4 py-2 text-white">Estado</th>
-                        <th class="px-4 py-2 text-white">URL</th>
+                        <th class="text-white">Numero de Solicitud</th>
+                        <th class="text-white">Nombre de Proyecto</th>
+                        <th class="text-white">Líder Proyecto</th>
+                        <th class="text-white">#</th>
+                        <th class="text-white">Nombre del Dispositivo</th>
+                        <th class="text-white">Cantidad Solicitada</th>
+                        <th class="text-white">Proveedor</th>
+                        <th class="text-white">Tipo de Estado</th>
+                        <th class="text-white">URL</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if ($result && $result->num_rows > 0): ?>
                         <?php while ($row = $result->fetch_assoc()): ?>
-                            <tr class="border-b">
-                                <td class="px-4 py-2 text-center"><?php echo htmlspecialchars($row['id_solicitud']); ?></td>
-                                <td class="px-4 py-2 text-center"><?php echo htmlspecialchars($row['nombre_proyecto']); ?></td>
-                                <td class="px-4 py-2 text-center">
-                                    <?php echo htmlspecialchars($row['nombre_lider'] . ' ' . $row['apellido_lider']); ?>
-                                </td>
-                                <td class="px-4 py-2 text-center"><?php echo htmlspecialchars($row['id_dispositivo']); ?></td>
-                                <td class="px-4 py-2 text-center"><?php echo htmlspecialchars($row['nombre_dispositivo']); ?></td>
-                                <td class="px-4 py-2 text-center"><?php echo htmlspecialchars($row['cantidad_dispositivo']); ?></td>
-                                <td class="px-4 py-2 text-center"><?php echo htmlspecialchars($row['Proveedor']); ?></td>
-                                <td class="px-4 py-2 text-center"><?php echo htmlspecialchars($row['Ubicacion']); ?></td>
-                                <td class="px-4 py-2 text-center">
+                            <tr class="even:bg-[#E0F2F1] text-black">
+                                <td><?php echo htmlspecialchars($row['id_solicitud']); ?></td>
+                                <td style="max-width: 300px; white-space: normal; word-break: break-word;"><?php echo htmlspecialchars($row['nombre_proyecto']); ?></td>
+                                <td><?php echo htmlspecialchars($row['nombre_lider'] . ' ' . $row['apellido_lider']); ?></td>
+                                <td><?php echo htmlspecialchars($row['id_dispositivo']); ?></td>
+                                <td><?php echo htmlspecialchars($row['nombre_dispositivo']); ?></td>
+                                <td><?php echo htmlspecialchars($row['cantidad_dispositivo']); ?></td>
+                                <td><?php echo htmlspecialchars($row['Proveedor']); ?></td>
+                                <td><?php echo htmlspecialchars($row['Ubicacion']); ?></td>
+                                <td>
                                     <?php if (!empty($row['LinkDispositivoFaltante'])): ?>
                                         <a href="<?php echo htmlspecialchars($row['LinkDispositivoFaltante']); ?>" target="_blank" class="text-blue-600 underline">
                                             Ver enlace
@@ -178,18 +181,50 @@ while ($rowLider = $liderQuery->fetch_assoc()) {
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="9" class="px-4 py-4 text-center text-gray-500">No hay dispositivos faltantes registrados.</td>
+                            <td colspan="9" class="text-center text-gray-500">No hay dispositivos faltantes registrados.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
         </div>
         <div class="mt-6 flex justify-center">
-            <a href="pantallaDirector.php" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-6 rounded transition duration-300">
+            <a href="pantallaDirector.php"
+                class="bg-[#388E3C] hover:bg-[#2e7031] text-white font-semibold py-2 px-6 rounded transition duration-300 shadow text-lg">
                 Volver
             </a>
         </div>
     </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $('#tablaCotizacionDispositivos').DataTable({
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay datos disponibles",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                    "lengthMenu": "Mostrar _MENU_ registros",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "No se encontraron registros",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                },
+                scrollY: '400px',
+                scrollCollapse: true,
+                paging: true,
+                ordering: true,
+                info: true
+            });
+        });
+    </script>
 </body>
+
 </html>
 <?php $stmt->close(); ?>

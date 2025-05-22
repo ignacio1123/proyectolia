@@ -171,23 +171,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id_solicitud']) && iss
     ?>
 
     <!-- Barra lateral izquierda -->
-    <nav class="fixed left-0 top-0 flex flex-col justify-between items-center bg-black text-white w-[12rem] h-full py-8 z-20 shadow-lg">
+    <nav class="fixed left-0 top-0 flex flex-col justify-between items-center bg-[#00796b] text-white w-[12rem] h-full py-8 z-20 shadow-lg">
         <!-- Logo -->
         <div>
             <a href="/" class="text-[1.2rem] font-bold">
-                Laboratorio<span class="text-yellow-400 text-[1.5rem] font-bold">LIA</span>
+                Laboratorio<span class="text-[#4CAF50] text-[1.5rem] font-bold">LIA</span>
             </a>
         </div>
         <!-- Enlace Cerrar Sesión -->
         <div>
-            <a href="../logout.php" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
+            <a href="../logout.php" class="bg-[#4CAF50] hover:bg-[#43A047] text-white font-semibold py-2 px-4 rounded transition duration-300">
                 Cerrar Sesión
             </a>
         </div>
     </nav>
 
-    <header class="absolute flex justify-end top-0 right-0 w-full bg-white p-4 shadow-md z-10" style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
-        <span class="text-black font-medium">Bienvenido, <?php echo htmlspecialchars($nombre); ?></span>
+    <header class="absolute flex justify-end top-0 right-0 w-full bg-[#5a6469] p-4 shadow-md z-10" style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
+        <span class="text-white font-medium">Bienvenido, <?php echo htmlspecialchars($nombre); ?></span>
     </header>
 
     <!-- Ajusta el padding-left para dejar espacio a la barra lateral -->
@@ -195,18 +195,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id_solicitud']) && iss
         <div class="w-[89%] flex flex-col">
             <div class="w-full mt-16"> <!-- Added mt-16 for margin-top -->
                 <div class="flex justify-between items-center mb-4">
-                    <span class="text-black block text-xl font-semibold">Bienvenido Director, <?php echo $_SESSION['nombre'] ?></span>
+                    <span class="text-[#00796b] block text-xl font-semibold">Bienvenido Director, <?php echo $_SESSION['nombre'] ?></span>
                     <div class="flex gap-4 mt-4"> <!-- Se agregó mt-4 para bajar los botones -->
                         <!-- Botón Ver Dispositivos Faltantes -->
-                        <a href="vistaDispositivosFaltantes.php" class="bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded-lg px-5 py-2.5 transition duration-300">
+                        <a href="vistaDispositivosFaltantes.php" class="bg-[#4CAF50] hover:bg-[#43A047] text-white font-medium rounded-lg px-5 py-2.5 transition duration-300">
                             Ver Dispositivos Faltantes
                         </a>
                         <!-- Botón Cotización dispositivos Faltantes -->
-                        <a href="CotizacionesDIpositivos.php" class="bg-yellow-500 hover:bg-yellow-600 text-black font-medium rounded-lg px-5 py-2.5 transition duration-300">
+                        <a href="CotizacionesDIpositivos.php" class="bg-[#4CAF50] hover:bg-[#43A047] text-white font-medium rounded-lg px-5 py-2.5 transition duration-300">
                             Cotización dispositivos Faltantes
                         </a>
                         <!-- Botón Dispositivos Utilizados en Proyectos -->
-                        <a href="dispositivosutilizados.php" class="bg-black hover:bg-gray-800 text-white font-medium rounded-lg px-5 py-2.5 transition duration-300">
+                        <a href="dispositivosutilizados.php" class="bg-[#00796b] hover:bg-[#388E3C] text-white font-medium rounded-lg px-5 py-2.5 transition duration-300">
                             Dispositivos Utilizados en Proyectos
                         </a>
                     </div>
@@ -217,28 +217,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id_solicitud']) && iss
                 ?>
 
                 <form method="get" action="" class="mb-6">
-                    <label for="almacen" class="text-black block text-sm mb-2">Filtrar por almacen:</label>
+                    <label for="almacen" class="text-black block text-sm mb-2">Filtrar por almacén:</label>
                     <div class="flex justify-between items-center space-x-4 gap-10">
-                        <select name="almacen" id="almacen" class="w-full bg-black/90 rounded-md text-white p-3 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                            <option value="">Selecciona una Almacen</option>
+                        <select name="almacen" id="almacen" class="w-full bg-white rounded-md text-black p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4CAF50]">
+                            <option value="" class="text-black">Selecciona un almacén</option>
                             <?php foreach ($almacenes as $almacen): ?>
-                                <option value="<?php echo htmlspecialchars($almacen['almacen']); ?>"
+                                <option value="<?php echo htmlspecialchars($almacen['almacen']); ?>" class="text-black"
                                     <?php echo ($almacenSeleccionada == $almacen['almacen']) ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($almacen['almacen']); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <button type="submit" class="p-3 bg-red-700 text-white rounded-md hover:bg-orange-500 transition duration-200">
+                        <button type="submit" class="p-3 bg-[#4CAF50] hover:bg-[#43A047] text-white rounded-md transition duration-200">
                             Filtrar
                         </button>
                     </div>
                 </form>
 
-                <h1 class="text-lg text-black font-bold p-2">Almacén de <?php echo $almacenSeleccionada ? htmlspecialchars($almacenSeleccionada) : 'todos'; ?></h1>
+                <h1 class="text-lg text-[#00796b] font-bold p-2">Almacén de <?php echo $almacenSeleccionada ? htmlspecialchars($almacenSeleccionada) : 'todos'; ?></h1>
 
                 <div class="rounded-lg shadow-lg" style="max-height: 400px; overflow-y: scroll; border: 1px solid #ddd;">
-                    <table class="min-w-full table-auto border-collapse bg-gray-100">
-                        <thead class="bg-black/90">
+                    <table class="min-w-full table-auto border-collapse bg-white">
+                        <thead class="bg-[#00796b]">
                             <tr>
                                 <th class="px-4 py-2 text-center text-white">#</th>
                                 <th class="px-4 py-2 text-center font-bold text-white">Dispositivo</th>
@@ -246,13 +246,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id_solicitud']) && iss
                                 <th class="px-4 py-2 text-center text-white">Estado</th>
                             </tr>
                         </thead>
-                        <tbody class="text-gray-700">
+                        <tbody class="text-[#263238]">
                             <?php foreach ($dispositivos as $dispositivo): ?>
-                                <tr class="">
-                                    <td class="px-4 py-2 text-black text-center"><?php echo htmlspecialchars($dispositivo['id_dispositivo']); ?></td>
-                                    <td class="px-4 py-2 text-black text-center"><?php echo htmlspecialchars($dispositivo['nombre_dispositivo']); ?></td>
-                                    <td class="px-4 py-2 text-black text-center"><?php echo htmlspecialchars($dispositivo['cantidad']); ?></td>
-                                    <td class="px-4 py-2 text-black text-center"><?php echo htmlspecialchars($dispositivo['estado']); ?></td>
+                                <tr class="even:bg-[#E0F2F1]">
+                                    <td class="px-4 py-2 text-center"><?php echo htmlspecialchars($dispositivo['id_dispositivo']); ?></td>
+                                    <td class="px-4 py-2 text-center"><?php echo htmlspecialchars($dispositivo['nombre_dispositivo']); ?></td>
+                                    <td class="px-4 py-2 text-center"><?php echo htmlspecialchars($dispositivo['cantidad']); ?></td>
+                                    <td class="px-4 py-2 text-center"><?php echo htmlspecialchars($dispositivo['estado']); ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -261,13 +261,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id_solicitud']) && iss
             </div>
 
             <div class="w-full">
-                <h1 class="text-black font-bold p-5 text-lg">Solicitudes de Estudiantes</h1>
+                <h1 class="text-[#00796b] font-bold p-5 text-lg">Solicitudes de Estudiantes</h1>
 
                 <!-- Contenedor con scroll vertical propio -->
                 <div class="rounded-lg shadow-lg bg-white"
-                     style="border: 1px solid #ddd; max-height: 400px; overflow-y: auto;">
-                    <table class="table-auto w-full text-left text-sm text-gray-700 min-w-[900px]">
-                        <thead class="bg-black/90">
+                    style="border: 1px solid #ddd; max-height: 400px; overflow-y: auto;">
+                    <table class="table-auto w-full text-left text-sm text-[#263238] min-w-[900px]">
+                        <thead class="bg-[#00796b]">
                             <tr>
                                 <th class="border-b py-2 px-4 text-white">#</th>
                                 <th class="border-b py-2 px-4 text-white">Nombre Proyecto</th>
@@ -295,9 +295,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id_solicitud']) && iss
 
                                         <div id="authentication-modal-<?php echo $solicitud['id_solicitud']; ?>" tabindex="-1" aria-hidden="true"
                                             class="hidden fixed inset-0 z-50 flex justify-center items-center bg-opacity-50">
-                                                <div class="relative w-[60%] max-h-[90vh] p-6 bg-white rounded-lg shadow-lg">
-                                                    <div class="flex items-center justify-between p-4 border-b">
-                                                        Numero de Proyecto: <?php echo htmlspecialchars($solicitud['id_solicitud']); ?>
+                                            <div class="relative w-[60%] max-h-[90vh] p-6 bg-white rounded-lg shadow-lg">
+                                                <div class="flex items-center justify-between p-4 border-b">
+                                                    Numero de Proyecto: <?php echo htmlspecialchars($solicitud['id_solicitud']); ?>
                                                     </h3>
                                                     <button type="button"
                                                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg p-2 inline-flex justify-center items-center"
@@ -313,18 +313,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id_solicitud']) && iss
                                                     <section class="flex flex-col border border-1 w-full md:w-1/4">
                                                         <button type="button"
                                                             onclick="updateInfo('info-display-<?php echo $solicitud['id_solicitud']; ?>', '<?php
-                                                                 $liderQuery = "SELECT nombre, apellido FROM usuarios WHERE id_usuario = ?";
-                                                                 $liderStmt = $conn->prepare($liderQuery);
-                                                                 $liderStmt->bind_param("i", $solicitud['id_usuario']);
-                                                                 $liderStmt->execute();
-                                                                 $liderResult = $liderStmt->get_result();
-                                                                 if ($liderRow = $liderResult->fetch_assoc()) {
-                                                                    echo htmlspecialchars($liderRow['nombre'] . ' ' . $liderRow['apellido']);
-                                                                } else {
-                                                                    echo "Líder no encontrado";
-                                                                        }
-                                                                        $liderStmt->close();
-                                                                 ?>')"
+                                                                                                                                            $liderQuery = "SELECT nombre, apellido FROM usuarios WHERE id_usuario = ?";
+                                                                                                                                            $liderStmt = $conn->prepare($liderQuery);
+                                                                                                                                            $liderStmt->bind_param("i", $solicitud['id_usuario']);
+                                                                                                                                            $liderStmt->execute();
+                                                                                                                                            $liderResult = $liderStmt->get_result();
+                                                                                                                                            if ($liderRow = $liderResult->fetch_assoc()) {
+                                                                                                                                                echo htmlspecialchars($liderRow['nombre'] . ' ' . $liderRow['apellido']);
+                                                                                                                                            } else {
+                                                                                                                                                echo "Líder no encontrado";
+                                                                                                                                            }
+                                                                                                                                            $liderStmt->close();
+                                                                                                                                            ?>')"
                                                             class="text-black px-4 py-2 rounded-lg text-left shadow">
                                                             Líder de Proyecto
                                                         </button>
@@ -798,99 +798,99 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id_solicitud']) && iss
     </div>
 
     <script>
-    function abrirModalRetro(id, accion) {
-        accionSeleccionada[id] = accion;
-        document.getElementById('modal-retro-' + id).classList.remove('hidden');
-    }
-
-    function cerrarModalRetro(id) {
-        document.getElementById('modal-retro-' + id).classList.add('hidden');
-    }
-
-    function cerrarVisualizacion(id) {
-        const modal = document.getElementById('authentication-modal-' + id);
-        if (modal) modal.classList.add('hidden');
-    }
-
-    function mostrarMensajeEstado(titulo, texto, tipo) {
-        const icono = document.getElementById('icono-estado');
-        if (tipo === 'Aprobado') {
-            icono.innerHTML = `<circle cx="12" cy="12" r="10" fill="#22c55e"/><path d="M8 12l2 2l4-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
-        } else if (tipo === 'Rechazado') {
-            icono.innerHTML = `<circle cx="12" cy="12" r="10" fill="#ef4444"/><path d="M15 9l-6 6M9 9l6 6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
-        } else {
-            icono.innerHTML = `<circle cx="12" cy="12" r="10" fill="#f59e42"/><path d="M12 8v4m0 4h.01" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+        function abrirModalRetro(id, accion) {
+            accionSeleccionada[id] = accion;
+            document.getElementById('modal-retro-' + id).classList.remove('hidden');
         }
-        document.getElementById('titulo-estado').textContent = titulo;
-        document.getElementById('texto-estado').textContent = texto;
-        document.getElementById('mensaje-estado-modal').classList.remove('hidden');
-    }
 
-    function cerrarMensajeEstado() {
-        document.getElementById('mensaje-estado-modal').classList.add('hidden');
-        // Cierra la visualización principal si hay una activa
-        if (window.ultimoIdVisualizado !== undefined && window.ultimoIdVisualizado !== null) {
-            cerrarVisualizacion(window.ultimoIdVisualizado);
-            window.ultimoIdVisualizado = null;
+        function cerrarModalRetro(id) {
+            document.getElementById('modal-retro-' + id).classList.add('hidden');
         }
-        // Recarga la página para actualizar la tabla y evitar la pantalla gris
-        location.reload();
-    }
 
-    function enviarEstadoConRetro(id) {
-        const retro = document.getElementById('textarea-retro-' + id).value.trim();
-        if (!retro) {
-            alert('Por favor, ingrese una retroalimentación.');
-            return;
+        function cerrarVisualizacion(id) {
+            const modal = document.getElementById('authentication-modal-' + id);
+            if (modal) modal.classList.add('hidden');
         }
-        document.getElementById('accion-' + id).value = accionSeleccionada[id];
-        document.getElementById('acotaciones-' + id).value = retro;
 
-        const form = document.getElementById('form-estado-' + id);
-        const formData = new FormData(form);
+        function mostrarMensajeEstado(titulo, texto, tipo) {
+            const icono = document.getElementById('icono-estado');
+            if (tipo === 'Aprobado') {
+                icono.innerHTML = `<circle cx="12" cy="12" r="10" fill="#22c55e"/><path d="M8 12l2 2l4-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+            } else if (tipo === 'Rechazado') {
+                icono.innerHTML = `<circle cx="12" cy="12" r="10" fill="#ef4444"/><path d="M15 9l-6 6M9 9l6 6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+            } else {
+                icono.innerHTML = `<circle cx="12" cy="12" r="10" fill="#f59e42"/><path d="M12 8v4m0 4h.01" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+            }
+            document.getElementById('titulo-estado').textContent = titulo;
+            document.getElementById('texto-estado').textContent = texto;
+            document.getElementById('mensaje-estado-modal').classList.remove('hidden');
+        }
 
-        fetch('', {
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => response.text())
-            .then(data => {
-                document.querySelector(`#estado-${id}`).textContent = accionSeleccionada[id];
-                cerrarModalRetro(id);
+        function cerrarMensajeEstado() {
+            document.getElementById('mensaje-estado-modal').classList.add('hidden');
+            // Cierra la visualización principal si hay una activa
+            if (window.ultimoIdVisualizado !== undefined && window.ultimoIdVisualizado !== null) {
+                cerrarVisualizacion(window.ultimoIdVisualizado);
+                window.ultimoIdVisualizado = null;
+            }
+            // Recarga la página para actualizar la tabla y evitar la pantalla gris
+            location.reload();
+        }
 
-                window.ultimoIdVisualizado = id;
+        function enviarEstadoConRetro(id) {
+            const retro = document.getElementById('textarea-retro-' + id).value.trim();
+            if (!retro) {
+                alert('Por favor, ingrese una retroalimentación.');
+                return;
+            }
+            document.getElementById('accion-' + id).value = accionSeleccionada[id];
+            document.getElementById('acotaciones-' + id).value = retro;
 
-                // Mostrar modal personalizado SOLO con el estado
-                let titulo = '';
-                let tipo = accionSeleccionada[id];
-                if (tipo === 'Aprobado') {
-                    titulo = 'Solicitud Aprobada';
-                } else if (tipo === 'Rechazado') {
-                    titulo = 'Solicitud Rechazada';
-                } else {
-                    titulo = 'Solicitud Pendiente';
-                }
-                mostrarMensajeEstado(
-                    titulo,
-                    '', // No mostrar retroalimentación aquí
-                    tipo
-                );
-            })
-            .catch(error => {
-                console.error('Error al actualizar el estado:', error);
-            });
-    }
+            const form = document.getElementById('form-estado-' + id);
+            const formData = new FormData(form);
+
+            fetch('', {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.text())
+                .then(data => {
+                    document.querySelector(`#estado-${id}`).textContent = accionSeleccionada[id];
+                    cerrarModalRetro(id);
+
+                    window.ultimoIdVisualizado = id;
+
+                    // Mostrar modal personalizado SOLO con el estado
+                    let titulo = '';
+                    let tipo = accionSeleccionada[id];
+                    if (tipo === 'Aprobado') {
+                        titulo = 'Solicitud Aprobada';
+                    } else if (tipo === 'Rechazado') {
+                        titulo = 'Solicitud Rechazada';
+                    } else {
+                        titulo = 'Solicitud Pendiente';
+                    }
+                    mostrarMensajeEstado(
+                        titulo,
+                        '', // No mostrar retroalimentación aquí
+                        tipo
+                    );
+                })
+                .catch(error => {
+                    console.error('Error al actualizar el estado:', error);
+                });
+        }
     </script>
 
     <style>
-    #authentication-modal-<?php echo $solicitud['id_solicitud']; ?>,
-    #authentication-modal-<?php echo $solicitud['id_solicitud']; ?> .relative,
-    #authentication-modal-<?php echo $solicitud['id_solicitud']; ?> .flex,
-    #authentication-modal-<?php echo $solicitud['id_solicitud']; ?> .w-full {
-        overflow-x: hidden !important;
-        min-width: 0 !important;
-        max-width: 100% !important;
-    }
+        #authentication-modal-<?php echo $solicitud['id_solicitud']; ?>,
+        #authentication-modal-<?php echo $solicitud['id_solicitud']; ?>.relative,
+        #authentication-modal-<?php echo $solicitud['id_solicitud']; ?>.flex,
+        #authentication-modal-<?php echo $solicitud['id_solicitud']; ?>.w-full {
+            overflow-x: hidden !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+        }
     </style>
 </body>
 

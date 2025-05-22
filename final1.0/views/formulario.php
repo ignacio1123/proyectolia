@@ -263,18 +263,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <span class="text-black font-medium">Bienvenido, <?php echo htmlspecialchars($nombre); ?></span>
     </header>
 
-    <!-- Menú lateral adaptado -->
-    <nav class="fixed left-0 top-0 flex flex-col justify-between items-center bg-black text-white w-[12rem] min-h-screen py-8 z-10 shadow-lg">
+    <!-- Barra lateral SIN botón cerrar sesión -->
+    <nav class="fixed left-0 top-0 flex flex-col justify-start items-center bg-[#00897b] text-white w-[13rem] min-h-screen py-8 z-10 shadow-lg">
         <!-- Logo -->
-        <div>
-            <a href="/" class="text-[1.2rem] font-bold">
-                Laboratorio<span class="text-yellow-400 text-[1.5rem] font-bold">LIA</span>
-            </a>
+        <div class="w-full pt-8 pb-2 flex flex-col items-center">
+            <span class="text-white text-xl font-bold leading-tight">
+                Laboratorio<span class="text-[#8BC34A]">LIA</span>
+            </span>
         </div>
     </nav>
 
     <!-- Ajusta el padding-left para que el contenido no se solape con el menú -->
-    <div class="w-full h-auto flex justify-center items-center pt-20 pb-24 flex-col" style="padding-left: 12rem;">
+    <div class="w-full h-auto flex justify-center items-center pt-20 pb-24 flex-col" style="padding-left: 13rem;">
         <form class="w-[80%] flex justify-center items-center" action="" method="POST">
             <div class="w-full">
 
@@ -284,13 +284,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
 
                     <div class="w-full sm:w-auto text-center sm:text-left sm:mx-8 mt-4 sm:mt-0">
-                        <h2 class="text-xl sm:text-2xl font-bold">Laboratorio de Innovación Aplicada</h2>
+                        <h2 class="text-xl sm:text-2xl font-bold text-[#00796b]">Laboratorio de Innovación Aplicada</h2>
                         <p class="text-sm sm:text-base">Área Informática Concepción, Santo Tomás Concepción.</p>
                         <p class="text-sm sm:text-base">Solicitud de Ingreso de Proyecto a Laboratorio de Innovación Aplicada</p>
                     </div>
 
                     <div class="w-full sm:w-auto text-center sm:text-right mt-4 sm:mt-0">
-                        <a href="../views/pantallaEstudiante.php" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
+                        <!-- Botón Volver atrás con texto blanco -->
+                        <a href="../views/pantallaEstudiante.php" class="bg-green-400 hover:bg-green-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
                             Volver atrás
                         </a>
                     </div>
@@ -345,8 +346,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
                             <div class="flex justify-end gap-2 m-2">
-                                <button type="button" id="addParticipante" class="w-auto  text-white  p-[0.2rem] bg-black">+</button>
-                                <button type="button" id="deleteParticipante" class="w-auto  text-white p-1 bg-red-700">-</button>
+                                <button type="button" id="addParticipante" class="w-auto bg-[#4CAF50] hover:bg-[#388E3C] text-white font-bold p-[0.2rem] rounded transition duration-200">+</button>
+                                <button type="button" id="deleteParticipante" class="w-auto bg-red-600 hover:bg-red-700 text-white font-bold p-1 rounded transition duration-200">-</button>
                             </div>
                         </div>
 
@@ -470,12 +471,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </table>
 
                             <div class="flex justify-end gap-2 m-2">
-                                <button type="button" id="addDispositivo" class="w-auto text-white p-[0.2rem] bg-black">+</button>
-                                <button type="button" id="deleteDispositivo" class="w-auto text-white p-1 bg-red-700">-</button>
+                                <button type="button" id="addDispositivo" class="w-auto bg-[#4CAF50] hover:bg-[#388E3C] text-white font-bold p-[0.2rem] rounded transition duration-200">+</button>
+                                <button type="button" id="deleteDispositivo" class="w-auto bg-red-600 hover:bg-red-700 text-white font-bold p-1 rounded transition duration-200">-</button>
                             </div>
                             <!-- Botón para mostrar dispositivos no encontrados -->
                             <div class="flex justify-start gap-2 m-2">
-                                <button type="button" id="mostrarDispositivosNuevos" class="w-auto text-black border border-black bg-white hover:bg-gray-100">¿No encuentras tu dispositivo?</button>
+                                <!-- Botón ¿No encuentras tu dispositivo? con texto blanco -->
+                                <button type="button" id="mostrarDispositivosNuevos" class="w-auto text-black border border-yellow-400 font-semibold px-3 py-1 rounded transition duration-200">
+                                    ¿No encuentras tu dispositivo?
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -563,8 +567,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 </tbody>
                             </table>
                             <div class="flex justify-end gap-2 m-2">
-                                <button type="button" id="addDispositivoNuevo" class="w-auto text-white p-[0.2rem] bg-black">+</button>
-                                <button type="button" id="deleteDispositivoNuevo" class="w-auto text-white p-1 bg-red-700">-</button>
+                                <button type="button" id="addDispositivoNuevo" class="w-auto bg-[#4CAF50] hover:bg-[#388E3C] text-white font-bold p-[0.2rem] rounded transition duration-200">+</button>
+                                <button type="button" id="deleteDispositivoNuevo" class="w-auto bg-red-600 hover:bg-red-700 text-white font-bold p-1 rounded transition duration-200">-</button>
                             </div>
                         </div>
                     </div>
@@ -690,7 +694,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         });
                     </script>
                 </div>
-                <button class=" px-4 py-2 w-full block bg-black hover:bg-black/90  text-white">Enviar</button>
+                <button class="px-4 py-2 w-full block bg-[#4CAF50] hover:bg-[#388E3C] text-white font-bold rounded transition duration-200">Enviar</button>
             </div>
         </form>
     </div>

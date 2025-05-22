@@ -472,7 +472,7 @@ $conn->close();
             
             <!-- Form Header -->
             <div class="form-header">
-                <img src="../public/img/asd.jpg" alt="Logo" class="w-16 h-16 md:w-20 md:h-20 mx-auto rounded-full border-4 border-white border-opacity-20">
+                <img src="../public/img/Lia.jpg" alt="Logo" class="w-16 h-16 md:w-20 md:h-20 mx-auto rounded-full border-4 border-white border-opacity-20">
                 <h2 class="text-xl md:text-2xl font-medium mt-3 md:mt-4">Bienvenido al Sistema</h2>
                 <p class="text-green-100 text-opacity-80 mt-1 md:mt-2 text-sm md:text-base">Ingresa tus credenciales institucionales</p>
             </div>

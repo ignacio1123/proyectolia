@@ -110,10 +110,10 @@ if (!$result) {
 </head>
 <body class="bg-gray-100">
     <!-- Barra de navegación superior -->
-    <div class="bg-black text-white p-4 shadow-md flex justify-between items-center">
+    <div style="background-color:#00796b" class="text-white p-4 shadow-md flex justify-between items-center">
         <h1 class="text-2xl font-semibold">Registro de Usuarios Pendientes</h1>
         <div>
-            <button onclick="window.location.href='pantallaAdmin.php'" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300 mr-2">
+            <button onclick="window.location.href='pantallaAdmin.php'" class="bg-green-400 hover:bg-green-500 text-black font-semibold py-2 px-4 rounded transition duration-300 mr-2">
                 Volver al Panel
             </button>
         </div>
@@ -124,12 +124,12 @@ if (!$result) {
         <?php echo $mensaje; ?>
         
         <div class="bg-white rounded-lg shadow p-6">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Usuarios Solicitando Acceso al Sistema</h2>
+            <h2 class="text-xl font-semibold text-[#00796b] mb-4">Usuarios Solicitando Acceso al Sistema</h2>
             
             <?php if ($result->num_rows > 0): ?>
                 <table id="tablaUsuarios" class="w-full border-collapse">
-                    <thead class="bg-gray-100">
-                        <tr>
+                    <thead>
+                        <tr class="bg-[#00796b] text-black">
                             <th class="px-4 py-2 text-left">ID</th>
                             <th class="px-4 py-2 text-left">Nombre</th>
                             <th class="px-4 py-2 text-left">Apellido</th>
@@ -143,7 +143,7 @@ if (!$result) {
                     <tbody>
                         <?php if ($result->num_rows > 0): ?>
                             <?php while ($row = $result->fetch_assoc()): ?>
-                                <tr class="border-b hover:bg-gray-50">
+                                <tr class="border-b even:bg-gray-50 hover:bg-gray-100">
                                     <td class="px-4 py-2"><?php echo $row['id_usuario']; ?></td>
                                     <td class="px-4 py-2"><?php echo htmlspecialchars($row['nombre']); ?></td>
                                     <td class="px-4 py-2"><?php echo htmlspecialchars($row['apellido']); ?></td>
@@ -151,12 +151,12 @@ if (!$result) {
                                     <td class="px-4 py-2"><?php echo htmlspecialchars($row['rol']); ?></td>
                                     <td class="px-4 py-2"><?php echo htmlspecialchars($row['rut']); ?></td>
                                     <td class="px-4 py-2">
-                                        <span class="bg-yellow-500 text-white px-2 py-1 rounded-full text-sm">
+                                        <span class="bg-yellow-400 text-black px-2 py-1 rounded-full text-sm font-semibold">
                                             <?php echo $row['estado']; ?>
                                         </span>
                                     </td>
                                     <td class="px-4 py-2">
-                                        <form method="POST" action="" class="inline-flex space-x-2">
+                                       <form method="POST" action="" class="inline-flex space-x-2">
                                             <input type="hidden" name="id_usuario" value="<?php echo $row['id_usuario']; ?>">
                                             <button type="submit" name="aprobar_usuario" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition">
                                                 Aprobar
@@ -185,12 +185,12 @@ if (!$result) {
 
     <!-- Modal de confirmación -->
     <div id="modalConfirmacion" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 hidden">
-        <div class="bg-gray-900 rounded-lg shadow-lg p-8 w-full max-w-xl border-2 border-white-400">
-            <h3 class="text-2xl font-bold mb-2 text-white" id="modalTitulo">¿Está seguro?</h3>
-            <p class="mb-6 text-gray-300" id="modalDescripcion">Confirme la acción a realizar sobre el usuario:</p>
+        <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-xl border-t-8 border-[#00796b]">
+            <h3 class="text-2xl font-bold mb-2 text-[#00796b]" id="modalTitulo">¿Está seguro?</h3>
+            <p class="mb-6 text-[#263238]" id="modalDescripcion">Confirme la acción a realizar sobre el usuario:</p>
             <div class="mb-6" id="modalMensaje"></div>
             <div class="flex justify-end gap-2">
-                <button id="btnCancelar" class="px-6 py-2 bg-black text-white font-semibold rounded hover:bg-gray-800 transition duration-300">Cancelar</button>
+                <button id="btnCancelar" class="px-6 py-2 bg-gray-200 text-[#263238] font-semibold rounded hover:bg-gray-300 transition duration-300">Cancelar</button>
                 <button id="btnConfirmar" class="px-6 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded transition duration-300">Confirmar</button>
             </div>
         </div>
@@ -203,7 +203,20 @@ if (!$result) {
         $(document).ready(function() {
             $('#tablaUsuarios').DataTable({
                 "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
+                    "sProcessing":     "Procesando...",
+                    "sLengthMenu":     "Mostrar _MENU_ registros",
+                    "sZeroRecords":    "No se encontraron resultados",
+                    "sEmptyTable":     "No hay datos disponibles en la tabla",
+                    "sInfo":           "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    "sInfoEmpty":      "Mostrando 0 a 0 de 0 registros",
+                    "sInfoFiltered":   "(filtrado de _MAX_ registros totales)",
+                    "sSearch":         "Buscar:",
+                    "oPaginate": {
+                        "sFirst":    "Primero",
+                        "sLast":     "Último",
+                        "sNext":     "Siguiente",
+                        "sPrevious": "Anterior"
+                    }
                 },
                 "responsive": true,
                 "order": [[0, "desc"]]
@@ -234,14 +247,32 @@ if (!$result) {
 
                 // Mensaje con los datos del usuario
                 var mensaje = `
-                    <table class="min-w-full text-xl text-left mb-4">
-                        <tr class="h-14"><td class="font-semibold pr-6 text-white">Nombre:</td><td class="font-bold text-white">${nombre}</td></tr>
-                        <tr class="h-14"><td class="font-semibold pr-6 text-white">Apellido:</td><td class="font-bold text-white">${apellido}</td></tr>
-                        <tr class="h-14"><td class="font-semibold pr-6 text-white">Email:</td><td class="font-bold text-white">${email}</td></tr>
-                        <tr class="h-14"><td class="font-semibold pr-6 text-white">RUT:</td><td class="font-bold text-white">${rut}</td></tr>
-                        <tr class="h-14"><td class="font-semibold pr-6 text-white">Rol:</td><td class="font-bold text-white">${rol}</td></tr>
-                        <tr class="h-14"><td class="font-semibold pr-6 text-white">Acción:</td><td class="font-bold ${accion === 'Aprobar' ? 'text-green-500' : 'text-red-500'}">${accion}</td></tr>
-                    </table>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="bg-gray-100 rounded p-3">
+                            <span class="block text-xs text-gray-500 font-semibold">Nombre</span>
+                            <span class="block text-base text-[#263238] font-bold">${nombre}</span>
+                        </div>
+                        <div class="bg-gray-100 rounded p-3">
+                            <span class="block text-xs text-gray-500 font-semibold">Apellido</span>
+                            <span class="block text-base text-[#263238] font-bold">${apellido}</span>
+                        </div>
+                        <div class="bg-gray-100 rounded p-3 col-span-2">
+                            <span class="block text-xs text-gray-500 font-semibold">Email</span>
+                            <span class="block text-base text-[#263238] font-bold">${email}</span>
+                        </div>
+                        <div class="bg-gray-100 rounded p-3">
+                            <span class="block text-xs text-gray-500 font-semibold">RUT</span>
+                            <span class="block text-base text-[#263238] font-bold">${rut}</span>
+                        </div>
+                        <div class="bg-gray-100 rounded p-3">
+                            <span class="block text-xs text-gray-500 font-semibold">Rol</span>
+                            <span class="block text-base text-[#263238] font-bold">${rol}</span>
+                        </div>
+                        <div class="bg-gray-100 rounded p-3 col-span-2">
+                            <span class="block text-xs text-gray-500 font-semibold">Acción</span>
+                            <span class="block text-base font-bold" style="color:${accion === 'Aprobar' ? '#4CAF50' : '#ef4444'}">${accion}</span>
+                        </div>
+                    </div>
                 `;
                 document.getElementById('modalMensaje').innerHTML = mensaje;
                 document.getElementById('modalConfirmacion').classList.remove('hidden');

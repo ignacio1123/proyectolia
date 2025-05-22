@@ -131,36 +131,35 @@ if (!$result) {
 </head>
 <body class="bg-gray-100">
     <!-- Barra de navegación superior -->
-    <div class="bg-black text-white p-4 shadow-md flex justify-between items-center">
+    <div class="bg-[#00796b] text-white p-4 shadow-md flex justify-between items-center">
         <h1 class="text-2xl font-semibold">Dispositivos Utilizados</h1>
         <div>
-            <a href="/proyectolia/final1.0/views/pantallaDirector.php" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
+            <a href="/proyectolia/final1.0/views/pantallaDirector.php" class="bg-[#388E3C] hover:bg-[#2e7031] text-white font-semibold py-2 px-4 rounded transition duration-300">
                 Volver al Panel
             </a>
         </div>
     </div>
     <!-- Contenedor principal -->
     <div class="p-8 print-area">
-        <h2 class="titulo-impresion text-xl font-semibold text-gray-800 mb-4">Listado de Dispositivos Utilizados en Proyectos</h2>
-        <div class="subtitulo-impresion">
+        <h2 class="titulo-impresion text-xl font-semibold text-[#00796b] mb-4">Listado de Dispositivos Utilizados en Proyectos</h2>
+        <div class="subtitulo-impresion text-[#263238] mb-4">
             Dispositivos utilizados por los estudiantes de Santo Tomas Cede Concepción, Laboratorio de innovación Aplicada.
         </div>
         <!-- Tabla de dispositivos solicitados -->
         <div class="bg-white rounded-lg shadow mt-12 p-4">
-            <!-- Contenedor SOLO para la tabla, sin overflow-x-auto -->
             <table id="tablaDispositivosSolicitados" class="min-w-full divide-y divide-gray-200" style="width:100%">
-                <thead>
+                <thead class="bg-[#00796b]">
                     <tr>
-                        <th>Numero de Solicitud</th>
-                        <th>Nombre de Proyecto</th>
-                        <th>#</th>
-                        <th>Nombre del Dispositivo</th>
-                        <th>Cantidad Solicitada</th>
+                        <th class="text-white">Numero de Solicitud</th>
+                        <th class="text-white">Nombre de Proyecto</th>
+                        <th class="text-white">#</th>
+                        <th class="text-white">Nombre del Dispositivo</th>
+                        <th class="text-white">Cantidad Solicitada</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php while ($row = $result->fetch_assoc()): ?>
-                        <tr>
+                        <tr class="even:bg-[#E0F2F1] text-black">
                             <td><?php echo htmlspecialchars($row['id_solicitud']); ?></td>
                             <td><?php echo htmlspecialchars($row['nombre_proyecto']); ?></td>
                             <td><?php echo htmlspecialchars($row['id_dispositivo']); ?></td>
@@ -179,63 +178,54 @@ if (!$result) {
                 paging: false,
                 lengthChange: false,
                 info: true,
-                scrollY: '350px', // SOLO barra vertical interna en la tabla
+                scrollY: '350px',
                 scrollCollapse: true,
                 buttons: [
                     {
                         extend: 'excelHtml5',
                         text: 'Descargar XLSX',
-                        className: 'bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded mr-2',
+                        className: 'bg-[#4CAF50] hover:bg-[#43A047] text-white font-semibold py-2 px-4 rounded mr-2',
                         title: 'Dispositivos Utilizados',
                         messageTop: 'Dispositivos utilizados por los estudiantes de Santo Tomas Cede Concepción, Laboratorio de innovación Aplicada. '
                     },
                     {
                         extend: 'pdfHtml5',
                         text: 'Descargar PDF',
-                        className: 'bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded mr-2',
+                        className: 'bg-[#388E3C] hover:bg-[#2e7031] text-white font-semibold py-2 px-4 rounded mr-2',
                         title: 'Listado de Dispositivos Utilizados en Proyectos',
                         messageTop: 'Dispositivos utilizados por los estudiantes de Santo Tomas Cede Concepción, Laboratorio de innovación Aplicada.',
-                        orientation: 'portrait', // Cambia a vertical para hacerlo más angosto
+                        orientation: 'portrait',
                         pageSize: 'A4',
                         customize: function (doc) {
-                            // Título principal
                             doc.styles.title = {
-                                fontSize: 16, // Igual que jsPDF
+                                fontSize: 16,
                                 bold: true,
                                 alignment: 'center',
-                                color: '#1e293b',
+                                color: '#00796b',
                                 margin: [0, 0, 0, 10]
                             };
-                            // Subtítulo (ajustar si lo tienes como content[1])
                             if (doc.content[1] && doc.content[1].text) {
-                                doc.content[1].fontSize = 11; // Igual que jsPDF
+                                doc.content[1].fontSize = 11;
                                 doc.content[1].margin = [0, 0, 0, 10];
                                 doc.content[1].alignment = 'center';
                             }
-                            // Encabezados de tabla
                             doc.styles.tableHeader = {
                                 bold: true,
-                                fontSize: 10, // Igual que jsPDF
-                                color: 'black',
-                                fillColor: '#f5f5f5',
+                                fontSize: 10,
+                                color: 'white',
+                                fillColor: '#00796b',
                                 alignment: 'center'
                             };
-                            // Ajusta los anchos de las columnas para que el PDF sea más compacto
                             doc.content[2].table.widths = ['12%', '22%', '8%', '32%', '10%'];
-                            // Reduce el tamaño de fuente general de la tabla
                             doc.styles.tableBodyEven = { fontSize: 10 };
                             doc.styles.tableBodyOdd = { fontSize: 10 };
-
-                            // Alternar color de filas (franjas)
                             var body = doc.content[2].table.body;
-                            for (var i = 1; i < body.length; i++) { // Empieza en 1 para saltar encabezado
+                            for (var i = 1; i < body.length; i++) {
                                 if (i % 2 === 0) {
-                                    // Gris claro
                                     for (var j = 0; j < body[i].length; j++) {
-                                        body[i][j].fillColor = '#f5f5f5';
+                                        body[i][j].fillColor = '#E0F2F1';
                                     }
                                 } else {
-                                    // Blanco
                                     for (var j = 0; j < body[i].length; j++) {
                                         body[i][j].fillColor = '#ffffff';
                                     }
@@ -263,7 +253,6 @@ if (!$result) {
                     }
                 }
             });
-            // Botón personalizado para imprimir PDF (exportar PDF)
             $('#btnImprimirPDF').on('click', function() {
                 tabla.button('.buttons-pdf').trigger();
             });

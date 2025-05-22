@@ -109,21 +109,21 @@ if ($stmt) {
         <span class="text-black font-medium">Bienvenido, <?php echo htmlspecialchars($nombre); ?></span>
     </header>
 
-    <nav class="absolute left-0 flex flex-col justify-between items-center bg-black text-white w-[12rem] h-full py-8 z-10 shadow-lg">
-        <!-- Logo -->
-        <div>
-            <a href="/" class="text-[1.2rem] font-bold">
-                Laboratorio<span class="text-yellow-400 text-[1.5rem] font-bold">LIA</span>
-            </a>
-        </div>
-
-        <!-- Enlace Cerrar Sesión -->
-        <div>
-            <a href="../logout.php" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
-                Cerrar Sesión
-            </a>
-        </div>
-    </nav>
+    <nav class="fixed left-0 top-0 h-full w-[13rem] bg-[#00897b] flex flex-col justify-between items-center z-20">
+    <!-- Logo -->
+    <div class="w-full pt-8 pb-2 flex flex-col items-center">
+        <span class="text-white text-xl font-bold leading-tight">
+            Laboratorio<span class="text-[#8BC34A]">LIA</span>
+        </span>
+    </div>
+    <!-- Botón Cerrar Sesión -->
+    <div class="w-full pb-6 flex flex-col items-center">
+        <a href="../logout.php"
+           class="bg-[#4CAF50] hover:bg-[#388E3C] text-white font-semibold py-2 px-6 rounded transition duration-200 shadow text-base">
+            Cerrar Sesión
+        </a>
+    </div>
+</nav>
 
     <section class="w-full pl-[17rem] flex justify-center items-center  flex-col">
 
@@ -138,7 +138,7 @@ if ($stmt) {
 
 
 
-            <a href="./formulario.php" class=" w-[15rem] p-2  mt-4 bg-black text-white font-bold text-center rounded-md hover:bg-black/80">Postula a Proyectos</a>
+            <a href="./formulario.php" class="w-[15rem] p-2 mt-4 bg-[#4CAF50] hover:bg-[#388E3C] text-white font-bold text-center rounded-md transition duration-200">Postula a Proyectos</a>
         </div>
 
         <div class="w-full flex justify-center items-center   gap-2  h-[70%] ">
@@ -153,10 +153,10 @@ if ($stmt) {
 
                     <div class="w-full" style="max-height: 300px; overflow-y: auto;">
                         <table class="w-full text-left border-collapse shadow-md rounded-lg overflow-hidden">
-                            <thead class="bg-black text-white sticky top-0 z-10">
+                            <thead class="bg-[#00796b] text-white sticky top-0 z-10">
                                 <tr>
                                     <th class="py-3 px-4 text-sm font-semibold uppercase border-b border-gray-700 text-center">ID Solicitud</th>
-                                    <th class="py-3 px-4 text-sm font-semibold uppercase border-b border-gray-700 text-center">Nombre líder de Proyecto</th>
+                                    <th class="py-3 px-4 text-sm font-semibold uppercase border-b border-gray-700 text-center">líder de Proyecto</th>
                                     <th class="py-3 px-4 text-sm font-semibold uppercase border-b border-gray-700 text-center">Nombre Proyecto</th>
                                     <th class="py-3 px-4 text-sm font-semibold uppercase border-b border-gray-700 text-center">Estado</th>
                                     <th class="py-3 px-4 text-sm font-semibold uppercase border-b border-gray-700 text-center">Retroalimentación</th>
@@ -188,10 +188,10 @@ if ($stmt) {
                         let estadoHtml = '';
                         switch (avance.estado) {
                             case 'Aprobado':
-                                estadoHtml = '<span class="px-3 py-1 bg-green-200 text-green-800 rounded-full text-xs font-medium">Aprobado</span>';
+                                estadoHtml = '<span class="px-3 py-1 bg-[#C8E6C9] text-[#388E3C] rounded-full text-xs font-medium">Aprobado</span>';
                                 break;
                             case 'Rechazado':
-                                estadoHtml = '<span class="px-3 py-1 bg-red-200 text-red-800 rounded-full text-xs font-medium">Rechazado</span>';
+                                estadoHtml = '<span class="px-3 py-1 bg-[#FFCDD2] text-[#C62828] rounded-full text-xs font-medium">Rechazado</span>';
                                 break;
                             case 'Pendiente':
                                 estadoHtml = '<span class="px-3 py-1 bg-yellow-200 text-yellow-800 rounded-full text-xs font-medium">Pendiente</span>';
@@ -203,12 +203,14 @@ if ($stmt) {
                             <tr class="hover:bg-gray-100 transition-colors">
                                 <td class="py-3 px-4 text-sm text-gray-700">${avance.id_solicitud}</td>
                                 <td class="py-3 px-4 text-sm text-gray-700">${avance.nombre}</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">${avance.nombre_proyecto}</td>
+                                <td class="py-3 px-4 text-sm text-gray-700" title="${avance.nombre_proyecto}">
+                                    ${avance.nombre_proyecto.length > 60 ? avance.nombre_proyecto.substring(0, 60) + '...' : avance.nombre_proyecto}
+                                </td>
                                 <td class="py-3 px-4 text-sm text-gray-700">${estadoHtml}</td>
                                 <td class="py-3 px-4 text-sm text-gray-700">
                                     <button
                                         type="button"
-                                        class="bg-black text-white px-2 py-0.5 rounded-sm hover:bg-gray-800 text-xs font-medium"
+                                        class="bg-[#4CAF50] text-white px-2 py-0.5 rounded-sm hover:bg-[#388E3C] text-xs font-medium"
                                         style="min-width: 0; height: 1.5rem; line-height: 1rem;"
                                         onclick="mostrarAcotaciones('${avance.acotaciones ? avance.acotaciones.replace(/'/g, "\\'") : 'Espere su retroalimentación...'}')">
                                         Ver Retroalimentación
@@ -236,7 +238,7 @@ if ($stmt) {
 
                     <div style="max-height: 400px; overflow-y: scroll;">
                         <table class="w-full text-left border-collapse shadow-md rounded-lg overflow-hidden">
-                            <thead class="bg-black text-white">
+                            <thead class="bg-[#00796b] text-white">
                                 <tr>
                                     <th class="py-3 px-4 text-sm font-semibold uppercase border-b border-gray-700">ID Avance</th>
                                     <th class="py-3 px-4 text-sm font-semibold uppercase border-b border-gray-700">Nombre Documento</th>
@@ -288,7 +290,7 @@ if ($stmt) {
 
                         <button
                             type="submit"
-                            class="w-full bg-black text-white font-bold py-3 rounded-md hover:bg-black/80">
+                            class="w-full bg-[#4CAF50] hover:bg-[#388E3C] text-white font-bold py-3 rounded-md transition duration-200">
                             Subir Avance
                         </button>
                     </form>
@@ -297,18 +299,20 @@ if ($stmt) {
         </div>
         <!-- Modal para mostrar las acotaciones -->
         <div id="modalAcotaciones" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden z-50">
-            <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md">
-                <h2 class="text-lg font-bold mb-4 text-center text-black">Retroalimentación</h2>
-                <textarea
-                    id="contenidoAcotaciones"
-                    maxlength="250"
-                    class="w-full bg-gray-100 border-l-4 border-gray-400 text-gray-800 p-4 rounded mb-4 shadow-inner min-h-[100px] resize-none text-base leading-relaxed"
-                    readonly
-                ></textarea>
-                <div class="mt-4 flex justify-end">
+            <div class="bg-white p-8 rounded-xl shadow-2xl w-[90%] max-w-md border-t-8 border-[#4CAF50] relative">
+                <h2 class="text-2xl font-bold mb-4 text-center text-[#00796b] tracking-wide">Retroalimentación</h2>
+                <div class="flex flex-col items-center">
+                    <textarea
+                        id="contenidoAcotaciones"
+                        maxlength="250"
+                        class="w-full bg-white border-2 border-[#4CAF50] text-[#263238] p-4 rounded-lg shadow-inner min-h-[100px] resize-none text-base leading-relaxed font-medium focus:outline-none"
+                        readonly
+                    ></textarea>
+                </div>
+                <div class="mt-6 flex justify-center">
                     <button
                         type="button"
-                        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                        class="bg-green-400 hover:bg-green-500 text-[#263238] px-6 py-2 rounded-lg font-bold shadow transition duration-200"
                         onclick="cerrarModal()">
                         Cerrar
                     </button>

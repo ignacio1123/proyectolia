@@ -84,7 +84,6 @@ $sql = "SELECT id_dispositivo, nombre_dispositivo, cantidad, estado, almacen FRO
 $result = $conn->query($sql);
 ?>
 
-
 <!DOCTYPE html>
 <html lang="es">
 
@@ -100,10 +99,10 @@ $result = $conn->query($sql);
 
 <body class="bg-gray-100">
 
-    <div class="bg-black text-white p-4 shadow-md flex justify-between items-center">
+    <div class="bg-[#00796b] text-white p-4 shadow-md flex justify-between items-center">
         <h1 class="text-2xl font-semibold">Administrador</h1>
         <div>
-            <a href="../logout.php" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
+            <a href="../logout.php" class="bg-green-400 hover:bg-green-500 text-black font-semibold py-2 px-4 rounded transition duration-300">
                 Cerrar Sesión
             </a>
         </div>
@@ -114,34 +113,31 @@ $result = $conn->query($sql);
 
             <div class="flex w-full justify-between">
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Agregar Dispositivo</h2>
+                    <h2 class="text-xl font-semibold text-[#00796b] mb-4">Agregar Dispositivo</h2>
 
                 </div>
 
                 <div>
-                    <button onclick="window.location.href='gestion_usuarios.php'" class="bg-gray-300 text-black px-2 py-1 rounded mr-2 hover:bg-gray-200">
+                    <button onclick="window.location.href='gestion_usuarios.php'" class="bg-[#4CAF50] hover:bg-[#388E3C] text-white px-2 py-1 rounded mr-2 transition duration-200">
                         Usuarios Registrados
                     </button>
-                    <button onclick="window.location.href='gestion_registroUsuarios.php'" class="bg-gray-300 text-black px-2 py-1 rounded hover:bg-gray-200">
+                    <button onclick="window.location.href='gestion_registroUsuarios.php'" class="bg-[#4CAF50] hover:bg-[#388E3C] text-white px-2 py-1 rounded transition duration-200">
                         Usuarios en Revisión
                     </button>
 
                 </div>
 
-
             </div>
-
 
             <form method="POST" class="flex  gap-10">
 
                 <input type="text" name="nombre_dispositivo" placeholder="Nombre del dispositivo" required class="p-2 rounded border w-full">
                 <input type="number" name="cantidad" placeholder="Cantidad" required class="p-2 rounded border w-full">
 
-
                 <div class="w-full relative">
                     <div class="absolute -top-10 right-0">
 
-                        <button type="button" class="bg-blue-700 text-white px-3 py-1 rounded-lg text-sm relative group">
+                        <button type="button" class="bg-[#00796b] text-white px-3 py-1 rounded-lg text-sm relative group">
 
                             <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max bg-gray-800 text-white text-xs rounded-md py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                 <ul>
@@ -158,7 +154,7 @@ $result = $conn->query($sql);
                                     </li>
 
                                     <li>
-                                        Almacen 3 - LEDS
+                                        Almacen 4 - LEDS
                                     </li>
 
                                 </ul>
@@ -172,30 +168,23 @@ $result = $conn->query($sql);
 
                 </div>
 
-
-
                 <select name="estado" class="p-2 rounded border w-full">
                     <option value="activo">Activo</option>
                     <option value="inactivo">Inactivo</option>
                 </select>
 
-
-                <button type="submit" name="agregar" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-400">Agregar</button>
+                <button type="submit" name="agregar" class="bg-[#4CAF50] hover:bg-[#388E3C] text-white px-4 py-2 rounded transition duration-200">Agregar</button>
 
             </form>
 
-
-
-
         </div>
 
-
         <div class="bg-white rounded-lg shadow p-6">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Listado de Dispositivos</h2>
+            <h2 class="text-xl font-semibold text-[#00796b] mb-4">Listado de Dispositivos</h2>
             <table id="tablaDispositivos" class="w-full border-collapse border border-gray-200">
 
                 <thead>
-                    <tr class="bg-black text-white">
+                    <tr class="bg-[#00796b] text-white">
                         <th class=" px-4 py-2 text-left">ID</th>
                         <th class=" px-4 py-2 text-left">Nombre del Dispositivo</th>
                         <th class=" px-4 py-2 text-left">Cantidad</th>
@@ -210,7 +199,7 @@ $result = $conn->query($sql);
                         while ($row = $result->fetch_assoc()) {
                             $estado = $row['estado'];
                             $disabled = $estado === 'inactivo' ? 'disabled' : '';
-                            echo "<tr class='hover:bg-gray-100'>
+                            echo "<tr class='hover:bg-gray-100 even:bg-gray-50'>
                         <td class='border border-gray-100 px-4 py-2'>{$row['id_dispositivo']}</td>
                         <td class='border border-gray-100 px-4 py-2'>{$row['nombre_dispositivo']}</td>
                         <td class='border border-gray-100 px-4 py-2'>{$row['cantidad']}</td>
@@ -226,13 +215,13 @@ $result = $conn->query($sql);
                             <form method='POST' action='' class='inline ml-2'>
                                 <input type='hidden' name='id_dispositivo' value='{$row['id_dispositivo']}'>
                                 <input type='number' name='cantidad_agregar' min='1' placeholder='Cantidad' class='p-1 rounded border w-16' $disabled>
-                                <button type='submit' name='aumentar' class='bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600' $disabled>Aumentar</button>
+                                <button type='submit' name='aumentar' class='bg-[#4CAF50] text-white px-2 py-1 rounded hover:bg-[#388E3C]' $disabled>Aumentar</button>
                             </form>
                             <!-- Botones para cambiar estado -->
                             <form method='POST' action='' class='inline ml-2'>
                                 <input type='hidden' name='id_dispositivo' value='{$row['id_dispositivo']}'>
                                 <input type='hidden' name='nuevo_estado' value='activo'>
-                                <button type='submit' name='cambiar_estado' class='bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600' " . ($estado === 'activo' ? 'disabled' : '') . ">Activo</button>
+                                <button type='submit' name='cambiar_estado' class='bg-[#4CAF50] text-white px-2 py-1 rounded hover:bg-[#388E3C]' " . ($estado === 'activo' ? 'disabled' : '') . ">Activo</button>
                             </form>
                             <form method='POST' action='' class='inline ml-2'>
                                 <input type='hidden' name='id_dispositivo' value='{$row['id_dispositivo']}'>
@@ -289,5 +278,4 @@ $result = $conn->query($sql);
         });
     </script>
 </body>
-
 </html>
