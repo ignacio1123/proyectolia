@@ -111,20 +111,20 @@ if ($stmt) {
     </header>
 
     <nav class="fixed left-0 top-0 h-full w-[13rem] bg-[#00897b] flex flex-col justify-between items-center z-20">
-    <!-- Logo -->
-    <div class="w-full pt-8 pb-2 flex flex-col items-center">
-        <span class="text-white text-xl font-bold leading-tight">
-            Laboratorio<span class="text-[#8BC34A]">LIA</span>
-        </span>
-    </div>
-    <!-- Botón Cerrar Sesión -->
-    <div class="w-full pb-6 flex flex-col items-center">
-        <a href="../logout.php"
-           class="bg-[#4CAF50] hover:bg-[#388E3C] text-white font-semibold py-2 px-6 rounded transition duration-200 shadow text-base">
-            Cerrar Sesión
-        </a>
-    </div>
-</nav>
+        <!-- Logo -->
+        <div class="w-full pt-8 pb-2 flex flex-col items-center">
+            <span class="text-white text-xl font-bold leading-tight">
+                Laboratorio<span class="text-[#8BC34A]">LIA</span>
+            </span>
+        </div>
+        <!-- Botón Cerrar Sesión -->
+        <div class="w-full pb-6 flex flex-col items-center">
+            <a href="../logout.php"
+                class="bg-[#4CAF50] hover:bg-[#388E3C] text-white font-semibold py-2 px-6 rounded transition duration-200 shadow text-base">
+                Cerrar Sesión
+            </a>
+        </div>
+    </nav>
 
     <section class="w-full pl-[17rem] flex justify-center items-center  flex-col">
 
@@ -165,42 +165,42 @@ if ($stmt) {
                             </thead>
                             <tbody id="tabla-estados" class="bg-gray-50 divide-y divide-gray-300">
                                 <!-- Aquí se llenarán los datos por JS -->
-                                  <script>
-        function mostrarAcotaciones(acotaciones) {
-            const modal = document.getElementById('modalAcotaciones');
-            const contenido = document.getElementById('contenidoAcotaciones');
-            contenido.value = acotaciones || 'No hay retroalimentación disponible.';
-            modal.classList.remove('hidden');
-        }
+                                <script>
+                                    function mostrarAcotaciones(acotaciones) {
+                                        const modal = document.getElementById('modalAcotaciones');
+                                        const contenido = document.getElementById('contenidoAcotaciones');
+                                        contenido.value = acotaciones || 'No hay retroalimentación disponible.';
+                                        modal.classList.remove('hidden');
+                                    }
 
-        function cerrarModal() {
-            // Ocultar el modal
-            const modal = document.getElementById('modalAcotaciones');
-            modal.classList.add('hidden');
-        }
+                                    function cerrarModal() {
+                                        // Ocultar el modal
+                                        const modal = document.getElementById('modalAcotaciones');
+                                        modal.classList.add('hidden');
+                                    }
 
-        function cargarEstados() {
-            fetch('obtener_estados.php')
-                .then(response => response.json())
-                .then(data => {
-                    const tbody = document.getElementById('tabla-estados');
-                    tbody.innerHTML = '';
-                    data.forEach(avance => {
-                        let estadoHtml = '';
-                        switch (avance.estado) {
-                            case 'Aprobado':
-                                estadoHtml = '<span class="px-3 py-1 bg-[#C8E6C9] text-[#388E3C] rounded-full text-xs font-medium">Aprobado</span>';
-                                break;
-                            case 'Rechazado':
-                                estadoHtml = '<span class="px-3 py-1 bg-[#FFCDD2] text-[#C62828] rounded-full text-xs font-medium">Rechazado</span>';
-                                break;
-                            case 'Pendiente':
-                                estadoHtml = '<span class="px-3 py-1 bg-yellow-200 text-yellow-800 rounded-full text-xs font-medium">Pendiente</span>';
-                                break;
-                            default:
-                                estadoHtml = '<span class="px-3 py-1 bg-yellow-200 text-yellow-800 rounded-full text-xs font-medium">En Revisión</span>';
-                        }
-                        tbody.innerHTML += `
+                                    function cargarEstados() {
+                                        fetch('obtener_estados.php')
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                const tbody = document.getElementById('tabla-estados');
+                                                tbody.innerHTML = '';
+                                                data.forEach(avance => {
+                                                    let estadoHtml = '';
+                                                    switch (avance.estado) {
+                                                        case 'Aprobado':
+                                                            estadoHtml = '<span class="px-3 py-1 bg-[#C8E6C9] text-[#388E3C] rounded-full text-xs font-medium">Aprobado</span>';
+                                                            break;
+                                                        case 'Rechazado':
+                                                            estadoHtml = '<span class="px-3 py-1 bg-[#FFCDD2] text-[#C62828] rounded-full text-xs font-medium">Rechazado</span>';
+                                                            break;
+                                                        case 'Pendiente':
+                                                            estadoHtml = '<span class="px-3 py-1 bg-yellow-200 text-yellow-800 rounded-full text-xs font-medium">Pendiente</span>';
+                                                            break;
+                                                        default:
+                                                            estadoHtml = '<span class="px-3 py-1 bg-yellow-200 text-yellow-800 rounded-full text-xs font-medium">En Revisión</span>';
+                                                    }
+                                                    tbody.innerHTML += `
                             <tr class="hover:bg-gray-100 transition-colors">
                                 <td class="py-3 px-4 text-sm text-gray-700">${avance.id_solicitud}</td>
                                 <td class="py-3 px-4 text-sm text-gray-700">${avance.nombre}</td>
@@ -219,14 +219,14 @@ if ($stmt) {
                                 </td>
                             </tr>
                         `;
-                    });
-                });
-        }
+                                                });
+                                            });
+                                    }
 
-        // Cargar al inicio y cada 5 segundos
-        cargarEstados();
-        setInterval(cargarEstados, 5000);
-    </script>
+                                    // Cargar al inicio y cada 5 segundos
+                                    cargarEstados();
+                                    setInterval(cargarEstados, 5000);
+                                </script>
                             </tbody>
                         </table>
                     </div>
@@ -252,7 +252,7 @@ if ($stmt) {
                                         <td class="py-3 px-4 text-sm text-gray-700"><?php echo htmlspecialchars($avance['id_avance']); ?></td>
                                         <td class="py-3 px-4 text-sm text-gray-700"><?php echo htmlspecialchars($avance['nombre_documento']); ?></td>
                                         <td class="py-3 px-4 text-sm text-blue-600">
-                                            <a href="<?php echo htmlspecialchars($avance['archivo']); ?>" target="_blank" class="hover:underline">
+                                            <a href="descargar_avance.php?id=<?php echo urlencode($avance['id_avance']); ?>" class="hover:underline">
                                                 Ver Documento
                                             </a>
                                         </td>
@@ -307,8 +307,7 @@ if ($stmt) {
                         id="contenidoAcotaciones"
                         maxlength="250"
                         class="w-full bg-white border-2 border-[#4CAF50] text-[#263238] p-4 rounded-lg shadow-inner min-h-[100px] resize-none text-base leading-relaxed font-medium focus:outline-none"
-                        readonly
-                    ></textarea>
+                        readonly></textarea>
                 </div>
                 <div class="mt-6 flex justify-center">
                     <button

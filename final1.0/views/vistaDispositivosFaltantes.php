@@ -124,7 +124,7 @@ if (!$result) {
     <div class="bg-[#00796b] text-white p-4 shadow-md flex justify-between items-center">
         <h1 class="text-2xl font-semibold">Dispositivos Faltantes</h1>
         <div>
-            <a href="/proyectolia/final1.0/views/pantallaDirector.php" class="bg-[#388E3C] hover:bg-[#2e7031] text-white font-semibold py-2 px-4 rounded transition duration-300">
+            <a href="pantallaDirector.php" class="bg-[#388E3C] hover:bg-[#2e7031] text-white font-semibold py-2 px-4 rounded transition duration-300">
                 Volver al Panel
             </a>
         </div>

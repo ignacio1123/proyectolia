@@ -39,7 +39,7 @@ require 'db_connection.php';
                 $reset_link = "http://localhost/proyectolia/final1.0/views/reset_password.php?token=" . $token;
                 echo '<div class="mb-2 text-[#263238]">Haz clic en el botón para restablecer tu contraseña:</div>';
                 echo '<a href="' . $reset_link . '" class="inline-block bg-[#4CAF50] hover:bg-[#388E3C] text-white font-semibold py-2 px-6 rounded transition duration-200 mb-4 shadow">Restablecer contraseña</a>';
-                echo '<div class="text-xs text-gray-400 break-all mt-2">Si el botón no funciona, copia y pega este enlace en tu navegador:<br><span class="select-all">' . $reset_link . '</span></div>';
+
             } else {
                 echo '<div class="mb-4 text-red-600 font-semibold">El correo electrónico no está registrado.</div>';
             }
@@ -49,7 +49,7 @@ require 'db_connection.php';
         $conn->close();
         ?>
         <a href="olvideContraseña.php" class="inline-block mt-6 bg-green-400 hover:bg-[#388E3C]-500 text-[#263238] font-semibold py-2 px-4 rounded transition duration-200 shadow">
-            Volver
+            Volver Atras
         </a>
     </div>
 </body>

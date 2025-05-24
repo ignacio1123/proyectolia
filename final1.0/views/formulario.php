@@ -479,7 +479,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="flex justify-start gap-2 m-2">
                                 <!-- Botón ¿No encuentras tu dispositivo? con texto blanco -->
                                 <button type="button" id="mostrarDispositivosNuevos" class="w-auto text-black border border-yellow-400 font-semibold px-3 py-1 rounded transition duration-200">
-                                    ¿No encuentras tu dispositivo?
+                                    ¿presione aqui,si no encuentras tu dispositivo?
                                 </button>
                             </div>
                         </div>

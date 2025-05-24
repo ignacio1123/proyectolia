@@ -235,7 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id_solicitud']) && iss
                     </div>
                 </form>
 
-                <h1 class="text-lg text-[#00796b] font-bold p-2">Almacén de <?php echo $almacenSeleccionada ? htmlspecialchars($almacenSeleccionada) : 'todos'; ?></h1>
+                <h1 class="text-lg text-[#00796b] font-bold p-2">Almacén de <?php echo $almacenSeleccionada ? htmlspecialchars($almacenSeleccionada) : 'Dispositivos'; ?></h1>
 
                 <div class="rounded-lg shadow-lg" style="max-height: 400px; overflow-y: scroll; border: 1px solid #ddd;">
                     <table class="min-w-full table-auto border-collapse bg-white">
@@ -652,7 +652,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id_solicitud']) && iss
                                                 </div>
 
                                                 <script>
-                                                    // filepath: c:\xampp\htdocs\proyectolia\final1.0\views\pantallaDirector.php
                                                     let accionSeleccionada = {};
 
                                                     function abrirModalRetro(id, accion) {

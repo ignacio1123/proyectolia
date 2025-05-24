@@ -115,7 +115,7 @@ if (!$result) {
         <h1 class="text-2xl font-semibold">Registro de Usuarios Pendientes</h1>
         <div>
             <button onclick="window.location.href='pantallaAdmin.php'" class="bg-green-400 hover:bg-green-500 text-black font-semibold py-2 px-4 rounded transition duration-300 mr-2">
-                Volver al Panel
+                Volver Atras
             </button>
         </div>
     </div>
