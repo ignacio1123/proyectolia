@@ -46,6 +46,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['iniciar_sesion'])) {
                             });
                         });
                       </script>";
+            } else if ($user['estado'] === 'Rechazado') {
+                echo "<script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Acceso rechazado',
+                                text: 'Tu registro fue rechazado. Por favor, comunícate con el Director para más información.',
+                                confirmButtonText: 'Aceptar'
+                            }).then(() => {
+                                window.location = '" . htmlspecialchars($_SERVER["PHP_SELF"]) . "';
+                            });
+                        });
+                      </script>";
             } else if (($user['estado'] === 'Aprobado' || $user['estado'] === 'Activo') && password_verify($contraseña, $user['password'])) {
 
                 $_SESSION['correo'] = $correo;

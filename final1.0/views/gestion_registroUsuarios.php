@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Procesar rechazo de usuario
     if (isset($_POST['rechazar_usuario'])) {
         $id_usuario = intval($_POST['id_usuario']);
-        $sql_rechazar = "UPDATE usuarios SET estado = 'Inactivo' WHERE id_usuario = ?"; // Cambiado a 'Inactivo'
+        $sql_rechazar = "UPDATE usuarios SET estado = 'Rechazado' WHERE id_usuario = ?"; // Cambiado a 'Rechazado'
         
         if ($stmt = $conn->prepare($sql_rechazar)) {
             $stmt->bind_param("i", $id_usuario);

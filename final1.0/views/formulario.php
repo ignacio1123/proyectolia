@@ -308,7 +308,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="section">
                         <label for="descripcion">Descripción</label>
-                        <input required type="text" id="descripcion" name="descripcion" placeholder="Descripción">
+                        <input required type="text" id="descripcion" name="descripcion" placeholder="Descripción" maxlength="150">
                     </div>
 
                     <div class="section">
@@ -358,14 +358,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 const deleteParticipanteButton = document.getElementById("deleteParticipante");
                                 const participanteTable = document.getElementById("participanteTable");
 
-
+                                // Permitir mínimo 1 y máximo 6 filas de participantes
                                 addParticipanteButton.addEventListener("click", function() {
-                                    const newRow = participanteTable.querySelector(".participanteRow").cloneNode(true);
-                                    const inputs = newRow.querySelectorAll("input, select");
-                                    inputs.forEach(input => input.value = "");
-                                    participanteTable.querySelector("tbody").appendChild(newRow);
+                                    const rows = participanteTable.querySelectorAll("tbody tr");
+                                    if (rows.length < 6) {
+                                        const newRow = participanteTable.querySelector(".participanteRow").cloneNode(true);
+                                        const inputs = newRow.querySelectorAll("input, select");
+                                        inputs.forEach(input => input.value = "");
+                                        participanteTable.querySelector("tbody").appendChild(newRow);
+                                    } else {
+                                        swal("Máximo alcanzado", "Solo puedes agregar hasta 6 participantes.", "warning");
+                                    }
                                 });
-
 
                                 deleteParticipanteButton.addEventListener("click", function() {
                                     const rows = participanteTable.querySelectorAll("tbody tr");
@@ -379,56 +383,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
 
                     <div class="section">
+    <div class="flex flex-col">
+        <span class="text-black font-bold">Propuesta de Valor</span>
+        <span> Describa y proporcione antecedentes que permitan conocer y comprender en qué consiste el nuevo producto o servicio innovador, y cómo este soluciona un problema o constituye una oportunidad de negocios en un determinado mercado objetivo (sus posibles clientes). Maximo 300 Palabras</span>
+    </div>
+    <input required type="text" id="propuesta_valor" name="propuesta_valor" placeholder="Propuesta de Valor" maxlength="255">
+</div>
 
-                        <div class="flex flex-col">
-                            <span class="text-black font-bold">Propuesta de Valor</span>
-                            <span> Describa y proporcione antecedentes que permitan conocer y comprender en qué consiste el nuevo producto o servicio innovador, y cómo este soluciona un problema o constituye una oportunidad de negocios en un determinado mercado objetivo (sus posibles clientes). Maximo 300 Palabras</span>
-                        </div>
+<div class="section">
+    <label for="merito_innovativo">Mérito innovativo</label>
+    <span>Describa las características o atributos que permiten diferenciar el producto/servicio propuesto, con respecto a lo que ya existe a nivel regional y nacional. Ingrese cada factor, característica o atributo diferenciador describiendo como se obtiene o fundamenta dicho atributo diferenciador y cómo este se traduce en una barrera de entrada (o ventajas competitivas), para impedir que la propuesta de negocio sea fácilmente copiable por la competencia. Indicar, además, si esta diferenciación es A NIVEL REGIONAL O NACIONAL. Ingrese un mínimo de 3 y un máximo de 5 factores diferenciadores.</span>
+    <input required type="text" id="merito_innovativo" name="merito_innovativo" placeholder="Mérito innovativo" maxlength="255">
+</div>
 
-                        <input required type="text" id="propuesta_valor" name="propuesta_valor" placeholder="Propuesta de Valor">
-                    </div>
+<div class="section">
+    <label for="redes_apoyo">Redes de apoyo</label>
+    <span>Identifique las redes de apoyo que posee y describa cómo estas pueden aportar y/o apoyar en el desarrollo y éxito del proyecto. Mencione, si existe algún grado de compromiso o formalización del posible apoyo. Maximo 200 Palabras</span>
+    <input required type="text" id="redes_apoyo" name="redes_apoyo" placeholder="Redes de apoyo" maxlength="255">
+</div>
 
-                    <div class="section">
-                        <label for="merito_innovativo">Mérito innovativo</label>
-                        <span>Describa las características o atributos que permiten diferenciar el producto/servicio propuesto, con respecto a lo que ya existe a nivel regional y nacional. Ingrese cada factor, característica o atributo diferenciador describiendo como se obtiene o fundamenta dicho atributo diferenciador y cómo este se traduce en una barrera de entrada (o ventajas competitivas), para impedir que la propuesta de negocio sea fácilmente copiable por la competencia. Indicar, además, si esta diferenciación es A NIVEL REGIONAL O NACIONAL. Ingrese un mínimo de 3 y un máximo de 5 factores diferenciadores.</span>
-                        <input required type="text" id="merito_innovativo" name="merito_innovativo" placeholder="Mérito innovativo">
-                    </div>
+<div class="section">
+    <label for="factores_criticos">Factores críticos</label>
+    <span>Identifique y describa las posibles dificultades que pudieran afectar el buen desarrollo y ejecución del nuevo producto o servicio innovador, cómo estas variables criticas serán abordadas por el equipo emprendedor. Maximo 200 Palabras</span>
+    <input required type="text" id="factores_criticos" name="factores_criticos" placeholder="Factores criticos" maxlength="255">
+</div>
 
-                    <div class="section">
-                        <label for="redes_apoyo">Redes de apoyo</label>
-                        <span>Identifique las redes de apoyo que posee y describa cómo estas pueden aportar y/o apoyar en el desarrollo y éxito del proyecto. Mencione, si existe algún grado de compromiso o formalización del posible apoyo. Maximo 200 Palabras</span>
-                        <input required type="text" id="redes_apoyo" name="redes_apoyo" placeholder="Redes de apoyo">
-                    </div>
+<div class="section">
+    <label for="oportunidad_mercado">Oportunidad de mercado</label>
+    <span>Identifique y justifique la oportunidad de mercado que da origen a esta nueva propuesta de negocios. Indique si el mercado objetivo nacional o internacional.</span>
+    <textarea required id="oportunidad_mercado" name="oportunidad_mercado" placeholder="Oportunidad de mercado" maxlength="255"></textarea>
+</div>
 
-                    <div class="section">
-                        <label for="factores_criticos">Factores críticos</label>
-                        <span>Identifique y describa las posibles dificultades que pudieran afectar el buen desarrollo y ejecución del nuevo producto o servicio innovador, cómo estas variables criticas serán abordadas por el equipo emprendedor. Maximo 200 Palabras</span>
-                        <input required type="text" id="factores_criticos" name="factores_criticos" placeholder="Factores criticos">
-                    </div>
+<div class="section">
+    <label for="potencial_mercado">Potencial de mercado</label>
+    <span>Describa y determine el tamaño (datos numéricos) del mercado especifico al cual desea llegar con esta nueva propuesta de negocios.</span>
+    <input required type="text" id="potencial_mercado" name="potencial_mercado" placeholder="Potencial de mercado" maxlength="255">
+</div>
 
-                    <div class="section">
-                        <label for="oportunidad_mercado">Oportunidad de mercado</label>
-                        <span>Identifique y justifique la oportunidad de mercado que da origen a esta nueva propuesta de negocios. Indique si el mercado objetivo nacional o internacional.</span>
-                        <textarea required type="text" id="oportunidad_mercado" name="oportunidad_mercado" placeholder="Oportunidad de mercado"></textarea>
-                    </div>
+<div class="section">
+    <label for="aspectos_validar">Aspectos a validar</label>
+    <span>Identifique y describa que tipo de pruebas, ensayos o certificaciones técnicas debe realizar para validar técnica y comercialmente el producto.</span>
+    <input required type="text" id="aspectos_validar" name="aspectos_validar" placeholder="Aspectos a validar" maxlength="255">
+</div>
 
-                    <div class="section">
-                        <label for="potencial_mercado">Potencial de mercado</label>
-                        <span>Describa y determine el tamaño (datos numéricos) del mercado especifico al cual desea llegar con esta nueva propuesta de negocios.</span>
-                        <input required type="text" id="potencial_mercado" name="potencial_mercado" placeholder="Potencial de mercado">
-                    </div>
-
-                    <div class="section">
-                        <label for="aspectos_validar">Aspectos a validar</label>
-                        <span>Identifique y describa que tipo de pruebas, ensayos o certificaciones técnicas debe realizar para validar técnica y comercialmente el producto.</span>
-                        <input required type="text" id="aspectos_validar" name="aspectos_validar" placeholder="Aspectos a validar">
-                    </div>
-
-                    <div class="section">
-                        <label for="presupuesto_preliminar">Presupuesto preliminar</label>
-                        <span>Establezca una relación de los componentes a adquirir y/o servicios necesarios de contratar para llevar a cabo la implementación del prototipo deseado.</span>
-                        <input required type="text" id="presupuesto_preliminar" name="presupuesto_preliminar" placeholder="Presupuesto preliminar">
-                    </div>
+<div class="section">
+    <label for="presupuesto_preliminar">Presupuesto preliminar</label>
+    <span>Establezca una relación de los componentes a adquirir y/o servicios necesarios de contratar para llevar a cabo la implementación del prototipo deseado.</span>
+    <input required type="text" id="presupuesto_preliminar" name="presupuesto_preliminar" placeholder="Presupuesto preliminar" maxlength="255">
+</div>
 
                     <div class="section">
                         <div class="flex flex-col">
@@ -479,7 +481,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="flex justify-start gap-2 m-2">
                                 <!-- Botón ¿No encuentras tu dispositivo? con texto blanco -->
                                 <button type="button" id="mostrarDispositivosNuevos" class="w-auto text-black border border-yellow-400 font-semibold px-3 py-1 rounded transition duration-200">
-                                    ¿presione aqui,si no encuentras tu dispositivo?
+                                    ¿presione aqui, si no encuentras tu dispositivo?
                                 </button>
                             </div>
                         </div>
